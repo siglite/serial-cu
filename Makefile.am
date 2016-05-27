@@ -15,10 +15,7 @@ UUHEADERS = uucp.h uudefs.h uuconf.h policy.h system.h sysdep.h getopt.h
 
 cu_SOURCES = cu.h cu.c prot.c log.c chat.c conn.c copy.c $(UUHEADERS)
 
-EXTRA_DIST = cu.1 contrib
-
-dist-hook:
-	-rm -rf $(distdir)/contrib/CVS
+EXTRA_DIST = cu.1
 
 install-exec-hook:
 	for f in cu; do \
