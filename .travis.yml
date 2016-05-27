@@ -1,0 +1,6 @@
+language: c
+addons:
+  apt:
+    packages:
+    - texinfo
+script: ./configure && make
