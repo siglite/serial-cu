@@ -959,34 +959,6 @@ extern boolean fsysdep_chdir P((const char *zdir));
    versions that support SIGTSTP.  In general, people can just shell
    out.  */
 extern boolean fsysdep_suspend P((void));
-
-/* Start getting files for uupick.  The zsystem argument may be NULL
-   to get files from all systems, or it may specify a particular
-   system.  The zpubdir argument is the public directory to use.  This
-   returns FALSE on error.  */
-extern boolean fsysdep_uupick_init P((const char *zsystem,
-				      const char *zpubdir));
-
-/* Get the next file for uupick.  This returns the basic file name.
-   It sets *pzfull to the full name, and *pzfrom to the name of the
-   system which sent this file over; both should be freed using
-   ubuffree.  *pzfull should be passed to ubuffree after it is no
-   longer needed.  The zsystem and zpubdir arguments should be the
-   same as the arguments to fsysdep_uupick_init.  This returns NULL
-   when all files been returned.  */
-extern char *zsysdep_uupick P((const char *zsystem, const char *zpubdir,
-			       char **pzfrom, char **pzfull));
-
-/* Clean up after getting files for uupick.  */
-extern boolean fsysdep_uupick_free P((const char *zsystem,
-				      const char *zpubdir));
-
-/* Translate a local file name for uupick.  On Unix this is just like
-   zsysdep_local_file_cwd except that a file beginning with ~/ is
-   placed in the user's home directory rather than in the public
-   directory.  */
-extern char *zsysdep_uupick_local_file P((const char *zfile,
-					  boolean *pfbadname));
 
 /* Remove a directory and all the files in it.  */
 extern boolean fsysdep_rmdir P((const char *zdir));

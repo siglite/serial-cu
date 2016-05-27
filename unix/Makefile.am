@@ -7,7 +7,7 @@ libunix_a_SOURCES = access.c addbas.c app3.c app4.c basnam.c bytfre.c \
 	exists.c failed.c filnam.c fsusg.c indir.c init.c isdir.c \
 	isfork.c iswait.c jobid.c lcksys.c link.c locfil.c lock.c \
 	loctim.c mail.c mkdirs.c mode.c move.c opensr.c pause.c \
-	picksb.c pipe.c portnm.c priv.c proctm.c recep.c run.c seq.c \
+	pipe.c portnm.c priv.c proctm.c recep.c run.c seq.c \
 	serial.c signal.c sindir.c size.c sleep.c spawn.c splcmd.c \
 	splnam.c spool.c srmdir.c statsb.c status.c sync.c tcp.c \
 	time.c tli.c tmpfil.c trunc.c uacces.c ufopen.c uid.c ultspl.c \
