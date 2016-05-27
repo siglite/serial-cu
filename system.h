@@ -761,14 +761,6 @@ extern boolean fsysdep_access P((const char *zfile));
    an error message and return FALSE.  */
 extern boolean fsysdep_daemon_access P((const char *zfile));
 
-/* Translate a destination from system!user to a place in the public
-   directory where uupick will get the file.  On Unix this produces
-   system!~/receive/user/localname, and that's probably what it has to
-   produce on any other system as well.  Returns NULL on a usage
-   error, or otherwise returns string allocated by zbufcpy.  */
-extern char *zsysdep_uuto P((const char *zdest,
-			     const char *zlocalname));
-
 /* Return TRUE if a pathname exists and is a directory.  */
 extern boolean fsysdep_directory P((const char *zpath));
 
