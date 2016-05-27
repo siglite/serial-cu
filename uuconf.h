@@ -354,8 +354,6 @@ enum uuconf_porttype
   UUCONF_PORTTYPE_MODEM,
   /* A direct connect port.  */
   UUCONF_PORTTYPE_DIRECT,
-  /* A TLI port.  Not supported on all systems.  */
-  UUCONF_PORTTYPE_TLI,
   /* A pipe port.  Not supported on all systems.  */
   UUCONF_PORTTYPE_PIPE
 };
@@ -411,32 +409,6 @@ struct uuconf_direct_port
   int uuconf_fhardflow;
 };
 
-/* Additional information for a TLI port.  */
-
-struct uuconf_tli_port
-{
-  /* Device name to open.  May be NULL, in which case the port name is
-     used.  */
-  char *uuconf_zdevice;
-  /* Whether this port should be turned into a stream, permitting the
-     read and write calls instead of the t_rcv and t_send calls.  */
-  int uuconf_fstream;
-  /* A NULL terminated list of modules to push after making the
-     connection.  May be NULL, in which case if fstream is non-zero,
-     then "tirdwr" is pushed onto the stream, and otherwise nothing is
-     pushed.  */
-  char **uuconf_pzpush;
-  /* A NULL terminated sequence of dialer/token pairs (element 0 is a
-     dialer name, element 1 is a token, etc.)  May be NULL.  If
-     element 0 is TLI or TLIS, element 1 is used as the address to
-     connect to; otherwise uuconf_zphone from the system information
-     is used.  */
-  char **uuconf_pzdialer;
-  /* Address to use when operating as a server.  This may contain
-     escape sequences.  */
-  char *uuconf_zservaddr;
-};
-
 /* Additional information for a pipe port.  */
 
 struct uuconf_pipe_port
@@ -472,7 +444,6 @@ struct uuconf_port
       struct uuconf_stdin_port uuconf_sstdin;
       struct uuconf_modem_port uuconf_smodem;
       struct uuconf_direct_port uuconf_sdirect;
-      struct uuconf_tli_port uuconf_stli;
       struct uuconf_pipe_port uuconf_spipe;
     } uuconf_u;
 };

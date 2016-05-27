@@ -199,22 +199,6 @@ uuconf_hdb_find_port (pointer pglobal, const char *zname, long int ibaud, long i
 	      qport->uuconf_u.uuconf_sdirect.uuconf_fhardflow = TRUE;
 	      ppzdialer = NULL;
 	    }
-	  else if (ctoks >= 5
-		   && (strcmp (pzsplit[4], "TLI") == 0
-		       || strcmp (pzsplit[4], "TLIS") == 0))
-	    {
-	      qport->uuconf_ttype = UUCONF_PORTTYPE_TLI;
-	      qport->uuconf_u.uuconf_stli.uuconf_zdevice = pzsplit[1];
-	      qport->uuconf_u.uuconf_stli.uuconf_fstream
-		= strcmp (pzsplit[4], "TLIS") == 0;
-	      qport->uuconf_u.uuconf_stli.uuconf_pzpush = NULL;
-	      qport->uuconf_u.uuconf_stli.uuconf_zservaddr = NULL;
-	      qport->uuconf_ireliable
-		= (UUCONF_RELIABLE_ENDTOEND | UUCONF_RELIABLE_RELIABLE
-		   | UUCONF_RELIABLE_EIGHT | UUCONF_RELIABLE_FULLDUPLEX
-		   | UUCONF_RELIABLE_SPECIFIED);
-	      ppzdialer = &qport->uuconf_u.uuconf_stli.uuconf_pzdialer;
-	    }
 	  else
 	    {
 	      qport->uuconf_ttype = UUCONF_PORTTYPE_MODEM;

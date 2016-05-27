@@ -51,10 +51,6 @@ fconn_init (struct uuconf_port *qport, struct sconnection *qconn, enum uuconf_po
       return fsysdep_modem_init (qconn);
     case UUCONF_PORTTYPE_DIRECT:
       return fsysdep_direct_init (qconn);
-#if HAVE_TLI
-    case UUCONF_PORTTYPE_TLI:
-      return fsysdep_tli_init (qconn);
-#endif
     case UUCONF_PORTTYPE_PIPE:
       return fsysdep_pipe_init (qconn);
     default:

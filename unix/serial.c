@@ -45,16 +45,6 @@ const char serial_rcsid[] = "$Id$";
 #include <limits.h>
 #endif
 
-#if HAVE_TLI
-#if HAVE_TIUSER_H
-#include <tiuser.h>
-#else /* ! HAVE_TIUSER_H */
-#if HAVE_XTI_H
-#include <xti.h>
-#endif /* HAVE_XTI_H */
-#endif /* ! HAVE_TIUSER_H */
-#endif /* HAVE_TLI */
-
 #if HAVE_FCNTL_H
 #include <fcntl.h>
 #else
@@ -181,12 +171,6 @@ const char serial_rcsid[] = "$Id$";
 #endif
 #endif
 
-#if HAVE_TLI
-extern int t_errno;
-extern char *t_errlist[];
-extern int t_nerr;
-#endif
-
 /* Determine bits to clear for the various terminal control fields for
    HAVE_SYSV_TERMIO and HAVE_POSIX_TERMIOS.  */
 
@@ -2178,7 +2162,7 @@ fsysdep_modem_end_dial (struct sconnection *qconn, struct uuconf_dialer *qdial)
 }
 
 /* Read data from a connection, with a timeout.  This routine handles
-   all types of connections, including TLI.
+   all types of connections.
 
    This function should return when we have read cmin characters or
    the timeout has occurred.  We have to work a bit to get Unix to do
@@ -2331,31 +2315,6 @@ fsysdep_conn_read (struct sconnection *qconn, char *zbuf, size_t *pclen, size_t 
 	  break;
 	}
 
-      /* Right here is the race condition which we avoid by having the
-	 SIGALRM handler schedule another SIGALRM.  */
-#if HAVE_TLI
-      if (q->ftli)
-	{
-	  int iflags;
-
-	  cgot = t_rcv (q->o, zbuf, cwant, &iflags);
-	  if (cgot < 0 && t_errno != TSYSERR)
-	    {
-	      usset_signal (SIGALRM, SIG_IGN, TRUE, (boolean *) NULL);
-	      alarm (0);
-	      usysdep_end_catch ();
-
-	      if (freport)
-		ulog (LOG_ERROR, "t_rcv: %s",
-		      (t_errno >= 0 && t_errno < t_nerr
-		       ? t_errlist[t_errno]
-		       : "unknown TLI error"));
-
-	      return FALSE;
-	    }
-	}
-      else
-#endif
 	cgot = read (q->o, zbuf, cwant);
 
       /* If the read returned an error, check for signals.  */
@@ -2529,7 +2488,7 @@ fsdouble_read (struct sconnection *qconn, char *zbuf, size_t *pclen, size_t cmin
 }
 
 /* Write data to a connection.  This routine handles all types of
-   connections, including TLI.  */
+   connections.  */
 
 boolean
 fsysdep_conn_write (struct sconnection *qconn, const char *zwrite, size_t cwrite)
@@ -2556,21 +2515,6 @@ fsysdep_conn_write (struct sconnection *qconn, const char *zwrite, size_t cwrite
 	  if (FGOT_QUIT_SIGNAL ())
 	    return FALSE;
 
-#if HAVE_TLI
-	  if (q->ftli)
-	    {
-	      cdid = t_snd (q->o, (char *) zwrite, cwrite, 0);
-	      if (cdid < 0 && t_errno != TSYSERR)
-		{
-		  ulog (LOG_ERROR, "t_snd: %s",
-			(t_errno >= 0 && t_errno < t_nerr
-			 ? t_errlist[t_errno]
-			 : "unknown TLI error"));
-		  return FALSE;
-		}
-	    }
-	  else
-#endif
 	    cdid = write (q->o, zwrite, cwrite);
 
 	  if (cdid >= 0)
@@ -2636,8 +2580,7 @@ fsdouble_write (struct sconnection *qconn, const char *zwrite, size_t cwrite)
 /* The fsysdep_conn_io routine is supposed to both read and write data
    until it has either filled its read buffer or written out all the
    data it was given.  This lets us write out large packets without
-   losing incoming data.  It handles all types of connections,
-   including TLI.  */
+   losing incoming data.  It handles all types of connections.  */
 
 boolean
 fsysdep_conn_io (struct sconnection *qconn, const char *zwrite, size_t *pcwrite, char *zread, size_t *pcread)
@@ -2727,28 +2670,6 @@ fsysdep_conn_io (struct sconnection *qconn, const char *zwrite, size_t *pcwrite,
 	  if (FGOT_QUIT_SIGNAL ())
 	    return FALSE;
 
-#if HAVE_TLI
-	  if (q->ftli)
-	    {
-	      int iflags;
-
-	      cgot = t_rcv (q->o, zread, cread, &iflags);
-	      if (cgot < 0)
-		{
-		  if (t_errno == TNODATA)
-		    errno = EAGAIN;
-		  else if (t_errno != TSYSERR)
-		    {
-		      ulog (LOG_ERROR, "t_rcv: %s",
-			    (t_errno >= 0 && t_errno < t_nerr
-			     ? t_errlist[t_errno]
-			     : "unknown TLI error"));
-		      return FALSE;
-		    }
-		}
-	    }
-	  else
-#endif
 	    cgot = read (q->o, zread, cread);
 
 	  if (cgot >= 0)
@@ -2797,26 +2718,6 @@ fsysdep_conn_io (struct sconnection *qconn, const char *zwrite, size_t *pcwrite,
 	  if (FGOT_QUIT_SIGNAL ())
 	    return FALSE;
 
-#if HAVE_TLI
-	  if (q->ftli)
-	    {
-	      cdid = t_snd (q->o, (char *) zwrite, cdo, 0);
-	      if (cdid < 0)
-		{
-		  if (t_errno == TFLOW)
-		    errno = EAGAIN;
-		  else if (t_errno != TSYSERR)
-		    {
-		      ulog (LOG_ERROR, "t_snd: %s",
-			    (t_errno >= 0 && t_errno < t_nerr
-			     ? t_errlist[t_errno]
-			     : "unknown TLI error"));
-		      return FALSE;
-		    }
-		}
-	    }
-	  else
-#endif
 	    cdid = write (q->o, zwrite, cdo);
 
 	  if (cdid >= 0)
@@ -2979,23 +2880,6 @@ fsysdep_conn_io (struct sconnection *qconn, const char *zwrite, size_t *pcwrite,
                  system, we could get the alarm before we start the
                  write call.  This would not be a disaster; often the
                  write will succeed anyhow.  */
-#if HAVE_TLI
-	      if (q->ftli)
-		{
-		  cdid = t_snd (q->o, (char *) zwrite, 1, 0);
-		  if (cdid < 0 && t_errno != TSYSERR)
-		    {
-		      usset_signal (SIGALRM, SIG_IGN, TRUE, (boolean *) NULL);
-		      alarm (0);
-		      ulog (LOG_ERROR, "t_snd: %s",
-			    (t_errno >= 0 && t_errno < t_nerr
-			     ? t_errlist[t_errno]
-			     : "unknown TLI error"));
-		      return FALSE;
-		    }
-		}
-	      else
-#endif
 		cdid = write (q->o, zwrite, 1);
 
 	      ierr = errno;

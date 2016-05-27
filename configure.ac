@@ -95,7 +95,7 @@ dnl
 AC_CHECK_HEADERS(stddef.h stdarg.h string.h strings.h unistd.h stdlib.h)
 AC_CHECK_HEADERS(limits.h time.h sys/wait.h sys/ioctl.h memory.h termios.h)
 AC_CHECK_HEADERS(fcntl.h sys/file.h sys/time.h sys/times.h libc.h)
-AC_CHECK_HEADERS(sysexits.h poll.h tiuser.h xti.h sys/tli.h stropts.h ftw.h)
+AC_CHECK_HEADERS(sysexits.h poll.h tiuser.h xti.h stropts.h ftw.h)
 AC_CHECK_HEADERS(glob.h sys/param.h sys/mount.h sys/vfs.h)
 AC_CHECK_HEADERS(sys/filsys.h sys/statfs.h sys/dustat.h sys/fs_types.h ustat.h)
 AC_CHECK_HEADERS(sys/statvfs.h sys/termiox.h)

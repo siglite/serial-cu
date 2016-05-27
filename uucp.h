@@ -254,10 +254,6 @@ extern char *getenv ();
 extern int errno;
 #endif
 
-/* If the system has the t_open call, guess that we can compile the
-   TLI code.  */
-#define HAVE_TLI HAVE_T_OPEN
-
 /* The boolean type holds boolean values.  */
 typedef int boolean;
 #undef TRUE
