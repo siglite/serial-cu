@@ -124,12 +124,12 @@ am_libunix_a_OBJECTS = access.$(OBJEXT) addbas.$(OBJEXT) \
 	signal.$(OBJEXT) sindir.$(OBJEXT) size.$(OBJEXT) \
 	sleep.$(OBJEXT) spawn.$(OBJEXT) splcmd.$(OBJEXT) \
 	splnam.$(OBJEXT) spool.$(OBJEXT) srmdir.$(OBJEXT) \
-	statsb.$(OBJEXT) status.$(OBJEXT) sync.$(OBJEXT) \
-	time.$(OBJEXT) tmpfil.$(OBJEXT) trunc.$(OBJEXT) \
-	uacces.$(OBJEXT) ufopen.$(OBJEXT) uid.$(OBJEXT) \
-	ultspl.$(OBJEXT) umode.$(OBJEXT) unknwn.$(OBJEXT) \
-	walk.$(OBJEXT) wldcrd.$(OBJEXT) work.$(OBJEXT) \
-	xqtfil.$(OBJEXT) xqtsub.$(OBJEXT)
+	status.$(OBJEXT) sync.$(OBJEXT) time.$(OBJEXT) \
+	tmpfil.$(OBJEXT) trunc.$(OBJEXT) uacces.$(OBJEXT) \
+	ufopen.$(OBJEXT) uid.$(OBJEXT) ultspl.$(OBJEXT) \
+	umode.$(OBJEXT) unknwn.$(OBJEXT) walk.$(OBJEXT) \
+	wldcrd.$(OBJEXT) work.$(OBJEXT) xqtfil.$(OBJEXT) \
+	xqtsub.$(OBJEXT)
 libunix_a_OBJECTS = $(am_libunix_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -294,7 +294,7 @@ libunix_a_SOURCES = access.c addbas.c app3.c app4.c basnam.c bytfre.c \
 	loctim.c mail.c mkdirs.c mode.c move.c opensr.c pause.c \
 	pipe.c portnm.c priv.c proctm.c recep.c run.c seq.c \
 	serial.c signal.c sindir.c size.c sleep.c spawn.c splcmd.c \
-	splnam.c spool.c srmdir.c statsb.c status.c sync.c \
+	splnam.c spool.c srmdir.c status.c sync.c \
 	time.c tmpfil.c trunc.c uacces.c ufopen.c uid.c ultspl.c \
 	umode.c unknwn.c walk.c wldcrd.c work.c xqtfil.c xqtsub.c \
 	fsusg.h
@@ -414,7 +414,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/splnam.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spool.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/srmdir.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/statsb.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/status.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strerr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sync.Po@am__quote@
