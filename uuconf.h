@@ -354,8 +354,6 @@ enum uuconf_porttype
   UUCONF_PORTTYPE_MODEM,
   /* A direct connect port.  */
   UUCONF_PORTTYPE_DIRECT,
-  /* A TCP port.  Not supported on all systems.  */
-  UUCONF_PORTTYPE_TCP,
   /* A TLI port.  Not supported on all systems.  */
   UUCONF_PORTTYPE_TLI,
   /* A pipe port.  Not supported on all systems.  */
@@ -411,21 +409,6 @@ struct uuconf_direct_port
   int uuconf_fcarrier;
   /* Non-zero if the port supports hardware flow control.  */
   int uuconf_fhardflow;
-};
-
-/* Additional information for a TCP port.  */
-
-struct uuconf_tcp_port
-{
-  /* The TCP port number to use.  May be a name or a number.  May be
-     NULL, in which case "uucp" is looked up using getservbyname.  */
-  char *uuconf_zport;
-  /* The IP version number to use.  This is 0 for any, 4 for IPv4, 6
-     for IPv6.  */
-  int uuconf_iversion;
-  /* A NULL terminated sequence of dialer/token pairs (element 0 is a
-     dialer name, element 1 is a token, etc.)  May be NULL.  */
-  char **uuconf_pzdialer;
 };
 
 /* Additional information for a TLI port.  */
@@ -489,7 +472,6 @@ struct uuconf_port
       struct uuconf_stdin_port uuconf_sstdin;
       struct uuconf_modem_port uuconf_smodem;
       struct uuconf_direct_port uuconf_sdirect;
-      struct uuconf_tcp_port uuconf_stcp;
       struct uuconf_tli_port uuconf_stli;
       struct uuconf_pipe_port uuconf_spipe;
     } uuconf_u;

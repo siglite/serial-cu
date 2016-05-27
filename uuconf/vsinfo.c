@@ -239,38 +239,6 @@ _uuconf_iv2_system_internal (struct sglobal *qglobal, const char *zsystem, struc
 	  *z = '\0';
 	}
 
-      /* If the port is "TCP", we set up a system specific port.  The
-	 baud rate becomes the service number and the phone number
-	 becomes the address (still stored in qsys->zphone).  */
-      if (strcmp (qset->uuconf_zport, "TCP") == 0)
-	{
-	  qset->uuconf_zport = NULL;
-	  qset->uuconf_qport = ((struct uuconf_port *)
-				uuconf_malloc (pblock,
-					       sizeof (struct uuconf_port)));
-	  if (qset->uuconf_qport == NULL)
-	    {
-	      qglobal->ierrno = errno;
-	      iret = UUCONF_MALLOC_FAILED | UUCONF_ERROR_ERRNO;
-	      break;
-	    }
-	  _uuconf_uclear_port (qset->uuconf_qport);
-	  qset->uuconf_qport->uuconf_zname = (char *) "TCP";
-	  qset->uuconf_qport->uuconf_ttype = UUCONF_PORTTYPE_TCP;
-	  qset->uuconf_qport->uuconf_ireliable
-	    = (UUCONF_RELIABLE_ENDTOEND | UUCONF_RELIABLE_RELIABLE
-	       | UUCONF_RELIABLE_EIGHT | UUCONF_RELIABLE_FULLDUPLEX
-	       | UUCONF_RELIABLE_SPECIFIED);
-	  if (ctoks < 4)
-	    qset->uuconf_qport->uuconf_u.uuconf_stcp.uuconf_zport
-	      = (char *) "uucp";
-	  else
-	    qset->uuconf_qport->uuconf_u.uuconf_stcp.uuconf_zport
-	      = pzsplit[3];
-	  qset->uuconf_qport->uuconf_u.uuconf_stcp.uuconf_iversion = 0;
-	  qset->uuconf_qport->uuconf_u.uuconf_stcp.uuconf_pzdialer = NULL;
-	}
-
       if (ctoks < 4)
 	continue;
 

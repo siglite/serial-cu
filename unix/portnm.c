@@ -6,35 +6,14 @@
 #include "sysdep.h"
 #include "system.h"
 
-#if HAVE_TCP
-#if HAVE_SYS_TYPES_TCP_H
-#include <sys/types.tcp.h>
-#endif
-#include <sys/socket.h>
-#endif
-
 /* Get the port name of standard input.  I assume that Unix systems
    generally support ttyname.  If they don't, this function can just
-   return NULL.  It uses getsockname to see whether standard input is
-   a TCP connection.  */
+   return NULL.  */
 
 const char *
 zsysdep_port_name (boolean *ftcp_port)
 {
   const char *z;
-
-  *ftcp_port = FALSE;
-
-#if HAVE_TCP
-  {
-    socklen_t clen;
-    struct sockaddr s;
-
-    clen = sizeof (struct sockaddr);
-    if (getsockname (0, &s, &clen) == 0)
-      *ftcp_port = TRUE;
-  }
-#endif /* HAVE_TCP */
 
   z = ttyname (0);
   if (z == NULL)

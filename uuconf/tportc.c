@@ -48,7 +48,6 @@ static const char * const azPtype_names[] =
   "stdin",
   "modem",
   "direct",
-  "tcp",
   "tli",
   "pipe"
 };
@@ -144,23 +143,6 @@ static const struct cmdtab_offset asPdirect_cmds[] =
 
 #define CDIRECT_CMDS (sizeof asPdirect_cmds / sizeof asPdirect_cmds[0])
 
-/* The TCP port command table.  */
-static const struct cmdtab_offset asPtcp_cmds[] =
-{
-  { "service", UUCONF_CMDTABTYPE_STRING,
-      offsetof (struct uuconf_port, uuconf_u.uuconf_stcp.uuconf_zport),
-      NULL },
-  { "version", UUCONF_CMDTABTYPE_INT,
-      offsetof (struct uuconf_port, uuconf_u.uuconf_stcp.uuconf_iversion),
-      NULL },
-  { "dialer-sequence", UUCONF_CMDTABTYPE_FULLSTRING,
-      offsetof (struct uuconf_port, uuconf_u.uuconf_stcp.uuconf_pzdialer),
-      NULL },
-  { NULL, 0, 0, NULL }
-};
-
-#define CTCP_CMDS (sizeof asPtcp_cmds / sizeof asPtcp_cmds[0])
-
 /* The TLI port command table.  */
 static const struct cmdtab_offset asPtli_cmds[] =
 {
@@ -199,7 +181,7 @@ static const struct cmdtab_offset asPpipe_cmds[] =
 #define max(i1, i2) ((i1) > (i2) ? (i1) : (i2))
 #define CCMDS \
   max (max (max (CPORT_CMDS, CSTDIN_CMDS), CMODEM_CMDS), \
-       max (max (CDIRECT_CMDS, CTCP_CMDS), max (CTLI_CMDS, CPIPE_CMDS)))
+       max (max (CDIRECT_CMDS), max (CTLI_CMDS, CPIPE_CMDS)))
 
 /* Handle a command passed to a port from a Taylor UUCP configuration
    file.  This can be called when reading either the port file or the
@@ -275,16 +257,6 @@ _uuconf_iport_cmd (struct sglobal *qglobal, int argc, char **argv, struct uuconf
 	  qport->uuconf_u.uuconf_sdirect.uuconf_fcarrier = FALSE;
 	  qport->uuconf_u.uuconf_sdirect.uuconf_fhardflow = TRUE;
 	  break;
-	case UUCONF_PORTTYPE_TCP:
-	  qport->uuconf_u.uuconf_stcp.uuconf_zport = (char *) "uucp";
-	  qport->uuconf_u.uuconf_stcp.uuconf_iversion = 0;
-	  qport->uuconf_u.uuconf_stcp.uuconf_pzdialer = NULL;
-	  qport->uuconf_ireliable = (UUCONF_RELIABLE_SPECIFIED
-				     | UUCONF_RELIABLE_ENDTOEND
-				     | UUCONF_RELIABLE_RELIABLE
-				     | UUCONF_RELIABLE_EIGHT
-				     | UUCONF_RELIABLE_FULLDUPLEX);
-	  break;
 	case UUCONF_PORTTYPE_TLI:
 	  qport->uuconf_u.uuconf_stli.uuconf_zdevice = NULL;
 	  qport->uuconf_u.uuconf_stli.uuconf_fstream = FALSE;
@@ -331,10 +303,6 @@ _uuconf_iport_cmd (struct sglobal *qglobal, int argc, char **argv, struct uuconf
 	case UUCONF_PORTTYPE_DIRECT:
 	  qcmds = asPdirect_cmds;
 	  ccmds = CDIRECT_CMDS;
-	  break;
-	case UUCONF_PORTTYPE_TCP:
-	  qcmds = asPtcp_cmds;
-	  ccmds = CTCP_CMDS;
 	  break;
 	case UUCONF_PORTTYPE_TLI:
 	  qcmds = asPtli_cmds;

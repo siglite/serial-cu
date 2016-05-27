@@ -316,9 +316,6 @@ extern boolean fsysdep_modem_end_dial P((struct sconnection *qconn,
 extern boolean fsysdep_stdin_init P((struct sconnection *qconn));
 extern boolean fsysdep_modem_init P((struct sconnection *qconn));
 extern boolean fsysdep_direct_init P((struct sconnection *qconn));
-#if HAVE_TCP
-extern boolean fsysdep_tcp_init P((struct sconnection *qconn));
-#endif
 #if HAVE_TLI
 extern boolean fsysdep_tli_init P((struct sconnection *qconn));
 #endif

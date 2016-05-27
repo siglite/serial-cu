@@ -199,19 +199,6 @@ uuconf_hdb_find_port (pointer pglobal, const char *zname, long int ibaud, long i
 	      qport->uuconf_u.uuconf_sdirect.uuconf_fhardflow = TRUE;
 	      ppzdialer = NULL;
 	    }
-	  else if (strcmp (pzsplit[0], "TCP") == 0)
-	    {
-	      /* For a TCP port, the device name is taken as the TCP
-		 port to use.  */
-	      qport->uuconf_ttype = UUCONF_PORTTYPE_TCP;
-	      qport->uuconf_ireliable
-		= (UUCONF_RELIABLE_ENDTOEND | UUCONF_RELIABLE_RELIABLE
-		   | UUCONF_RELIABLE_EIGHT | UUCONF_RELIABLE_FULLDUPLEX
-		   | UUCONF_RELIABLE_SPECIFIED);
-	      qport->uuconf_u.uuconf_stcp.uuconf_zport = pzsplit[1];
-	      qport->uuconf_u.uuconf_stcp.uuconf_iversion = 0;
-	      ppzdialer = &qport->uuconf_u.uuconf_stcp.uuconf_pzdialer;
-	    }
 	  else if (ctoks >= 5
 		   && (strcmp (pzsplit[4], "TLI") == 0
 		       || strcmp (pzsplit[4], "TLIS") == 0))
