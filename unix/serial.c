@@ -231,17 +231,11 @@ static boolean fsserial_open P((struct sconnection *qconn, long ibaud,
 				enum tclocal_setting tlocal));
 static boolean fsstdin_open P((struct sconnection *qconn, long ibaud,
 			       boolean fwait, boolean fuser));
-static boolean fsmodem_open P((struct sconnection *qconn, long ibaud,
-			       boolean fwait, boolean fuser));
 static boolean fsdirect_open P((struct sconnection *qconn, long ibaud,
 				boolean fwait, boolean fuser));
 static boolean fsblock P((struct ssysdep_conn *q, boolean fblock));
 static boolean fsserial_close P((struct ssysdep_conn *q));
 static boolean fsstdin_close P((struct sconnection *qconn,
-				pointer puuconf,
-				struct uuconf_dialer *qdialer,
-				boolean fsuccess));
-static boolean fsmodem_close P((struct sconnection *qconn,
 				pointer puuconf,
 				struct uuconf_dialer *qdialer,
 				boolean fsuccess));
@@ -259,8 +253,6 @@ static boolean fsstdin_set P((struct sconnection *qconn,
 			       enum tparitysetting tparity,
 			       enum tstripsetting tstrip,
 			       enum txonxoffsetting txonxoff));
-static boolean fsmodem_carrier P((struct sconnection *qconn,
-				  boolean fcarrier));
 static boolean fsserial_hardflow P((struct sconnection *qconn,
 				    boolean fhardflow));
 static boolean fsrun_chat P((int oread, int owrite, char **pzprog));
@@ -283,26 +275,6 @@ static const struct sconncmds sstdincmds =
   fsstdin_set,
   NULL, /* pfcarrier */
   fsdouble_chat,
-  isserial_baud
-};
-
-/* The command table for modem ports.  */
-
-static const struct sconncmds smodemcmds =
-{
-  usserial_free,
-  fsserial_lock,
-  fsserial_unlock,
-  fsmodem_open,
-  fsmodem_close,
-  fmodem_dial,
-  fsysdep_conn_read,
-  fsysdep_conn_write,
-  fsysdep_conn_io,
-  fsserial_break,
-  fsserial_set,
-  fsmodem_carrier,
-  fsysdep_conn_chat,
   isserial_baud
 };
 
@@ -506,15 +478,6 @@ fsysdep_stdin_init (struct sconnection *qconn)
   return fsserial_init (qconn, &sstdincmds, (const char *) NULL);
 }
 
-/* Initialize a connection for use on a modem port.  */
-
-boolean
-fsysdep_modem_init (struct sconnection *qconn)
-{
-  return fsserial_init (qconn, &smodemcmds,
-			qconn->qport->uuconf_u.uuconf_smodem.uuconf_zdevice);
-}
-
 /* Initialize a connection for use on a direct port.  */
 
 boolean
@@ -701,7 +664,7 @@ fsserial_lockfile (boolean flok, const struct sconnection *qconn)
   ubuffree (zalc);
   return fret;
 }
-
+
 /* If we can mark a modem line in use, then when we lock a port we
    must open it and mark it in use.  We can't wait until the actual
    open because we can't fail out if it is locked then.  */
@@ -1293,33 +1256,6 @@ fsstdin_open (struct sconnection *qconn, long int ibaud, boolean fwait, boolean 
   return TRUE;
 }
 
-/* Open a modem port.  */
-
-static boolean
-fsmodem_open (struct sconnection *qconn, long int ibaud, boolean fwait, boolean fuser)
-{
-  struct uuconf_modem_port *qm;
-
-  qm = &qconn->qport->uuconf_u.uuconf_smodem;
-  if (ibaud == (long) 0)
-    ibaud = qm->uuconf_ibaud;
-
-  if (! fsserial_open (qconn, ibaud, fwait, fuser,
-		       fwait ? CLEAR_CLOCAL : SET_CLOCAL))
-    return FALSE;
-
-  /* If we are waiting for carrier, then turn on hardware flow
-     control.  We don't turn on hardware flow control when dialing
-     out, because some modems don't assert the necessary signals until
-     they see carrier.  Instead, we turn on hardware flow control in
-     fsmodem_carrier.  */
-  if (fwait
-      && ! fsserial_hardflow (qconn, qm->uuconf_fhardflow))
-    return FALSE;
-
-  return TRUE;
-}
-
 /* Open a direct port.  */
 
 static boolean
@@ -1474,151 +1410,6 @@ fsstdin_close (struct sconnection *qconn, pointer puuconf ATTRIBUTE_UNUSED, stru
   return fsserial_close (qsysdep);
 }
 
-/* Close a modem port.  */
-
-static boolean
-fsmodem_close (struct sconnection *qconn, pointer puuconf, struct uuconf_dialer *qdialer, boolean fsuccess)
-{
-  struct ssysdep_conn *qsysdep;
-  boolean fret;
-  struct uuconf_dialer sdialer;
-  const struct uuconf_chat *qchat;
-
-  qsysdep = (struct ssysdep_conn *) qconn->psysdep;
-
-  fret = TRUE;
-
-  /* Figure out the dialer so that we can run the complete or abort
-     chat scripts.  */
-  if (qdialer == NULL)
-    {
-      if (qconn->qport->uuconf_u.uuconf_smodem.uuconf_pzdialer != NULL)
-	{
-	  const char *zdialer;
-	  int iuuconf;
-
-	  zdialer = qconn->qport->uuconf_u.uuconf_smodem.uuconf_pzdialer[0];
-	  iuuconf = uuconf_dialer_info (puuconf, zdialer, &sdialer);
-	  if (iuuconf == UUCONF_SUCCESS)
-	    qdialer = &sdialer;
-	  else
-	    {
-	      ulog_uuconf (LOG_ERROR, puuconf, iuuconf);
-	      fret = FALSE;
-	    }
-	}
-      else
-	qdialer = qconn->qport->uuconf_u.uuconf_smodem.uuconf_qdialer;
-    }
-
-  /* Get the complete or abort chat script to use.  */
-  qchat = NULL;
-  if (qdialer != NULL)
-    {
-      if (fsuccess)
-	qchat = &qdialer->uuconf_scomplete;
-      else
-	qchat = &qdialer->uuconf_sabort;
-    }
-
-  if (qchat != NULL
-      && (qchat->uuconf_pzprogram != NULL
-	  || qchat->uuconf_pzchat != NULL))
-    {
-      boolean fsighup_ignored;
-      HELD_SIG_MASK smask;
-      int i;
-      sig_atomic_t afhold[INDEXSIG_COUNT];
-
-      /* We're no longer interested in carrier.  */
-      (void) fsmodem_carrier (qconn, FALSE);
-
-      /* The port I/O routines check whether any signal has been
-	 received, and abort if one has.  While we are closing down
-	 the modem, we don't care if we received a signal in the past,
-	 but we do care if we receive a new signal (otherwise it would
-	 be difficult to kill a uucico which was closing down a
-	 modem).  We never care if we get SIGHUP at this point.  So we
-	 turn off SIGHUP, remember what signals we've already seen,
-	 and clear our notion of what signals we've seen.  We have to
-	 block the signals while we remember and clear the array,
-	 since we might otherwise miss a signal which occurred between
-	 the copy and the clear (old systems can't block signals; they
-	 will just have to suffer the race).  */
-      usset_signal (SIGHUP, SIG_IGN, FALSE, &fsighup_ignored);
-      smask = isblocksigs ();
-      for (i = 0; i < INDEXSIG_COUNT; i++)
-	{
-	  afhold[i] = afSignal[i];
-	  afSignal[i] = FALSE;
-	}
-      usunblocksigs (smask);
-
-      if (! fchat (qconn, puuconf, qchat, (const struct uuconf_system *) NULL,
-		   (const struct uuconf_dialer *) NULL, (const char *) NULL,
-		   FALSE, qconn->qport->uuconf_zname,
-		   qsysdep->ibaud))
-	fret = FALSE;
-
-      /* Restore the old signal array and the SIGHUP handler.  It is
-	 not necessary to block signals here, since all we are doing
-	 is exactly what the signal handler itself would do if the
-	 signal occurred.  */
-      for (i = 0; i < INDEXSIG_COUNT; i++)
-	if (afhold[i])
-	  afSignal[i] = TRUE;
-      if (! fsighup_ignored)
-	usset_signal (SIGHUP, ussignal, TRUE, (boolean *) NULL);
-    }
-
-  if (qdialer != NULL
-      && qdialer == &sdialer)
-    (void) uuconf_dialer_free (puuconf, &sdialer);
-
-#if ! HAVE_RESET_BUG
-  /* Reset the terminal to make sure we drop DTR.  It should be
-     dropped when we close the descriptor, but that doesn't seem to
-     happen on some systems.  Use a 30 second timeout to avoid hanging
-     while draining output.  */
-  if (qsysdep->fterminal)
-    {
-#if HAVE_BSD_TTY
-      qsysdep->snew.stty.sg_ispeed = B0;
-      qsysdep->snew.stty.sg_ospeed = B0;
-#endif
-#if HAVE_SYSV_TERMIO
-      qsysdep->snew.c_cflag = (qsysdep->snew.c_cflag &~ CBAUD) | B0;
-#endif
-#if HAVE_POSIX_TERMIOS
-      (void) cfsetospeed (&qsysdep->snew, B0);
-#endif
-
-      fSalarm = FALSE;
-
-      if (fsysdep_catch ())
-	{
-	  usysdep_start_catch ();
-	  usset_signal (SIGALRM, usalarm, TRUE, (boolean *) NULL);
-	  (void) alarm (30);
-
-	  (void) fsetterminfodrain (qsysdep->o, &qsysdep->snew);
-	}
-
-      usset_signal (SIGALRM, SIG_IGN, TRUE, (boolean *) NULL);
-      (void) alarm (0);
-      usysdep_end_catch ();
-
-      /* Let the port settle.  */
-      sleep (2);
-    }
-#endif /* ! HAVE_RESET_BUG */
-
-  if (! fsserial_close (qsysdep))
-    fret = FALSE;
-
-  return fret;
-}
-
 /* Close a direct port.  */
 
 /*ARGSUSED*/
@@ -1626,245 +1417,6 @@ static boolean
 fsdirect_close (struct sconnection *qconn, pointer puuconf ATTRIBUTE_UNUSED, struct uuconf_dialer *qdialer ATTRIBUTE_UNUSED, boolean fsuccess ATTRIBUTE_UNUSED)
 {
   return fsserial_close ((struct ssysdep_conn *) qconn->psysdep);
-}
-
-/* Begin dialing out on a modem port.  This opens the dialer device if
-   there is one.  */
-
-boolean
-fsysdep_modem_begin_dial (struct sconnection *qconn, struct uuconf_dialer *qdial)
-{
-  struct ssysdep_conn *qsysdep;
-  const char *z;
-
-  qsysdep = (struct ssysdep_conn *) qconn->psysdep;
-
-#ifdef TIOCMODEM
-  /* If we can tell the modem to obey modem control, do so.  */
-  {
-    int iperm;
-
-    iperm = 0;
-    (void) ioctl (qsysdep->o, TIOCMODEM, &iperm);
-  }
-#endif /* TIOCMODEM */
-
-  /* If we supposed to toggle DTR, do so.  */
-
-  if (qdial->uuconf_fdtr_toggle)
-    {
-#ifdef TIOCCDTR
-      (void) ioctl (qsysdep->o, TIOCCDTR, 0);
-      sleep (2);
-      (void) ioctl (qsysdep->o, TIOCSDTR, 0);
-#else /* ! defined (TIOCCDTR) */
-      if (qsysdep->fterminal)
-	{
-	  sterminal sbaud;
-
-	  sbaud = qsysdep->snew;
-
-#if HAVE_BSD_TTY
-	  sbaud.stty.sg_ispeed = B0;
-	  sbaud.stty.sg_ospeed = B0;
-#endif
-#if HAVE_SYSV_TERMIO
-	  sbaud.c_cflag = (sbaud.c_cflag &~ CBAUD) | B0;
-#endif
-#if HAVE_POSIX_TERMIOS
-	  (void) cfsetospeed (&sbaud, B0);
-#endif
-
-	  (void) fsetterminfodrain (qsysdep->o, &sbaud);
-	  sleep (2);
-	  (void) fsetterminfo (qsysdep->o, &qsysdep->snew);
-	}
-#endif /* ! defined (TIOCCDTR) */
-
-      if (qdial->uuconf_fdtr_toggle_wait)
-	sleep (2);
-    }
-
-  if (! fsmodem_carrier (qconn, FALSE))
-    return FALSE;
-
-  /* Open the dial device if there is one.  */
-  z = qconn->qport->uuconf_u.uuconf_smodem.uuconf_zdial_device;
-  if (z != NULL)
-    {
-      char *zfree;
-      int o;
-
-      qsysdep->ohold = qsysdep->o;
-
-      zfree = NULL;
-      if (*z != '/')
-	{
-	  zfree = zbufalc (sizeof "/dev/" + strlen (z));
-	  sprintf (zfree, "/dev/%s", z);
-	  z = zfree;
-	}
-
-      o = open ((char *) z, O_RDWR | O_NOCTTY);
-      if (o < 0)
-	{
-	  ulog (LOG_ERROR, "open (%s): %s", z, strerror (errno));
-	  ubuffree (zfree);
-	  return FALSE;
-	}
-      ubuffree (zfree);
-
-      if (fcntl (o, F_SETFD, fcntl (o, F_GETFD, 0) | FD_CLOEXEC) < 0)
-	{
-	  ulog (LOG_ERROR, "fcntl (FD_CLOEXEC): %s", strerror (errno));
-	  (void) close (o);
-	  return FALSE;
-	}
-
-      qsysdep->o = o;
-    }
-
-  return TRUE;
-}
-
-/* Tell the port to require or not require carrier.  On BSD this uses
-   TIOCCAR and TIOCNCAR, which I assume are generally supported (it
-   can also use the LNOMDM bit supported by IS68K Unix).  On System V
-   it resets or sets CLOCAL.  We only require carrier if the port
-   supports it.  This will only be called with fcarrier TRUE if the
-   dialer supports carrier.  */
-
-static boolean
-fsmodem_carrier (struct sconnection *qconn, boolean fcarrier)
-{
-  register struct ssysdep_conn *q;
-  struct uuconf_modem_port *qm;
-
-  q = (struct ssysdep_conn *) qconn->psysdep;
-
-  if (! q->fterminal)
-    return TRUE;
-
-  qm = &qconn->qport->uuconf_u.uuconf_smodem;
-  if (fcarrier)
-    {
-      if (qm->uuconf_fcarrier)
-	{
-#ifdef TIOCCAR
-	  /* Tell the modem to pay attention to carrier.  */
-	  if (ioctl (q->o, TIOCCAR, 0) < 0)
-	    {
-	      ulog (LOG_ERROR, "ioctl (TIOCCAR): %s", strerror (errno));
-	      return FALSE;
-	    }
-#endif /* TIOCCAR */
-
-#if HAVE_BSD_TTY
-#ifdef LNOMDM
-	  /* IS68K Unix uses a local LNOMDM bit.  */
-	  {
-	    int iparam;
-
-	    iparam = LNOMDM;
-	    if (ioctl (q->o, TIOCLBIC, &iparam) < 0)
-	      {
-		ulog (LOG_ERROR, "ioctl (TIOCLBIC, LNOMDM): %s",
-		      strerror (errno));
-		return FALSE;
-	      }
-	  }
-#endif /* LNOMDM */
-#endif /* HAVE_BSD_TTY */
-
-#if HAVE_SYSV_TERMIO || HAVE_POSIX_TERMIOS
-	  /* Put the modem into nonlocal mode.  */
-	  q->snew.c_cflag &=~ CLOCAL;
-	  if (! fsetterminfo (q->o, &q->snew))
-	    {
-	      ulog (LOG_ERROR, "Can't clear CLOCAL: %s", strerror (errno));
-	      return FALSE;
-	    }
-#endif /* HAVE_SYSV_TERMIO || HAVE_POSIX_TERMIOS */
-	}
-
-      /* Turn on hardware flow control after turning on carrier.  We
-	 don't do it until now because some modems don't assert the
-	 right signals until they see carrier.  */
-      if (! fsserial_hardflow (qconn, qm->uuconf_fhardflow))
-	return FALSE;
-    }
-  else
-    {
-      /* Turn off any hardware flow control before turning off
-	 carrier.  */
-      if (! fsserial_hardflow (qconn, FALSE))
-	return FALSE;
-
-#ifdef TIOCNCAR
-      /* Tell the modem to ignore carrier.  */ 
-      if (ioctl (q->o, TIOCNCAR, 0) < 0)
-	{
-	  ulog (LOG_ERROR, "ioctl (TIOCNCAR): %s", strerror (errno));
-	  return FALSE;
-	}
-#endif /* TIOCNCAR */
-
-#if HAVE_BSD_TTY
-#ifdef LNOMDM
-      /* IS68K Unix uses a local LNOMDM bit.  */
-      {
-	int iparam;
-
-	iparam = LNOMDM;
-	if (ioctl (q->o, TIOCLBIS, &iparam) < 0)
-	  {
-	    ulog (LOG_ERROR, "ioctl (TIOCLBIS, LNOMDM): %s",
-		  strerror (errno));
-	    return FALSE;
-	  }
-      }
-#endif /* LNOMDM */
-#endif /* HAVE_BSD_TTY */
-
-#if HAVE_SYSV_TERMIO || HAVE_POSIX_TERMIOS
-      /* Put the modem into local mode (ignore carrier) to start the chat
-	 script.  */
-      q->snew.c_cflag |= CLOCAL;
-      if (! fsetterminfo (q->o, &q->snew))
-	{
-	  ulog (LOG_ERROR, "Can't set CLOCAL: %s", strerror (errno));
-	  return FALSE;
-	}
-  
-#if HAVE_CLOCAL_BUG
-      /* On SCO and AT&T UNIX PC you have to reopen the port.  */
-      {
-	int onew;
- 
-	onew = open (q->zdevice, O_RDWR);
-	if (onew < 0)
-	  {
-	    ulog (LOG_ERROR, "open (%s): %s", q->zdevice, strerror (errno));
-	    return FALSE;
-	  }
- 
-	if (fcntl (onew, F_SETFD,
-		   fcntl (onew, F_GETFD, 0) | FD_CLOEXEC) < 0)
-	  {
-	    ulog (LOG_ERROR, "fcntl (FD_CLOEXEC): %s", strerror (errno));
-	    (void) close (onew);
-	    return FALSE;
-	  }
-
-	(void) close (q->o);
-	q->o = onew;
-      }
-#endif /* HAVE_CLOCAL_BUG */
-
-#endif /* HAVE_SYSV_TERMIO || HAVE_POSIX_TERMIOS */
-    }
-
-  return TRUE;
 }
 
 /* Tell the port to use hardware flow control.  There is no standard
@@ -2033,134 +1585,6 @@ fsserial_hardflow (struct sconnection *qconn, boolean fhardflow)
   return TRUE;
 }
 
-/* Finish dialing out on a modem by closing any dialer device and waiting
-   for carrier.  */
-
-boolean
-fsysdep_modem_end_dial (struct sconnection *qconn, struct uuconf_dialer *qdial)
-{
-  struct ssysdep_conn *q;
-
-  q = (struct ssysdep_conn *) qconn->psysdep;
-
-  if (qconn->qport->uuconf_u.uuconf_smodem.uuconf_zdial_device != NULL)
-    {
-      (void) close (q->o);
-      q->o = q->ohold;
-    }
-
-  if (qconn->qport->uuconf_u.uuconf_smodem.uuconf_fcarrier
-      && qdial->uuconf_fcarrier)
-    {
-      /* Tell the port that we need carrier.  */
-      if (! fsmodem_carrier (qconn, TRUE))
-	return FALSE;
-
-#ifdef TIOCWONLINE
-
-      /* We know how to wait for carrier, so do so.  */
-
-      /* If we already got a signal, just quit now.  */
-      if (FGOT_QUIT_SIGNAL ())
-	return FALSE;
-
-      /* This bit of code handles signals just like fsysdep_conn_read
-	 does.  See that function for a longer explanation.  */
-
-      /* Use fsysdep_catch to handle a longjmp from the signal
-	 handler.  */
-
-      fSalarm = FALSE;
-
-      if (fsysdep_catch ())
-	{
-	  /* Start catching SIGALRM; normally we ignore it.  */
-	  usysdep_start_catch ();
-	  usset_signal (SIGALRM, usalarm, TRUE, (boolean *) NULL);
-	  (void) alarm (qdial->uuconf_ccarrier_wait);
-
-	  /* We really don't care if we get an error, since that will
-	     probably just mean that TIOCWONLINE isn't supported in
-	     which case there's nothing we can do anyhow.  If we get
-	     SIGINT we want to keep waiting for carrier, because
-	     SIGINT just means don't start any new sessions.  We don't
-	     handle SIGINT correctly if we do a longjmp in the signal
-	     handler; too bad.  */
-	  while (ioctl (q->o, TIOCWONLINE, 0) < 0
-		 && errno == EINTR)
-	    {
-	      /* Log the signal.  */
-	      ulog (LOG_ERROR, (const char *) NULL);
-	      if (FGOT_QUIT_SIGNAL () || fSalarm)
-		break;
-	    }
-	}
-
-      /* Turn off the pending SIGALRM and ignore SIGALARM again.  */
-      usset_signal (SIGALRM, SIG_IGN, TRUE, (boolean *) NULL);
-      (void) alarm (0);
-      usysdep_end_catch ();
-
-      /* If we got a random signal, just return FALSE.  */
-      if (FGOT_QUIT_SIGNAL ())
-	return FALSE;
-
-      /* If we timed out, give an error.  */
-      if (fSalarm)
-	{
-	  ulog (LOG_ERROR, "Timed out waiting for carrier");
-	  return FALSE;
-	}
-
-#else /* ! defined (TIOCWONLINE) */
-
-      /* Try to open the port again without using O_NDELAY.  In
-	 principle, the open should delay until carrier is available.
-	 This may not work on some systems, so we just ignore any
-	 errors.  */
-      {
-	int onew;
- 
-	onew = open (q->zdevice, O_RDWR);
-	if (onew >= 0)
-	  {
-	    boolean fbad;
-	    int iflags;
-
-	    fbad = FALSE;
-
-	    if (fcntl (onew, F_SETFD,
-		       fcntl (onew, F_GETFD, 0) | FD_CLOEXEC) < 0)
-	      fbad = TRUE;
-
-	    if (! fbad)
-	      {
-		iflags = fcntl (onew, F_GETFL, 0);
-		if (iflags < 0
-		    || ! fsetterminfo (onew, &q->snew))
-		  fbad = TRUE;
-	      }
-
-	    if (fbad)
-	      (void) close (onew);
-	    else
-	      {
-		(void) close (q->o);
-		q->o = onew;
-		q->iflags = iflags;
-#if HAVE_TIOCSINUSE
-		(void) ioctl (onew, TIOCSINUSE, 0);
-#endif
-	      }
-	  }
-      }
-
-#endif /* ! defined (TIOCWONLINE) */
-    }
-
-  return TRUE; 
-}
-
 /* Read data from a connection, with a timeout.  This routine handles
    all types of connections.
 

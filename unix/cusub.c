@@ -120,9 +120,6 @@ zsport_line (const struct uuconf_port *qport)
     default:
     case UUCONF_PORTTYPE_STDIN:
       return NULL;
-    case UUCONF_PORTTYPE_MODEM:
-      zline = qport->uuconf_u.uuconf_smodem.uuconf_zdevice;
-      break;
     case UUCONF_PORTTYPE_DIRECT:
       zline = qport->uuconf_u.uuconf_sdirect.uuconf_zdevice;
       break;
@@ -595,7 +592,6 @@ uscu_child (struct sconnection *qconn, int opipe)
 	case UUCONF_PORTTYPE_STDIN:
 	  oport = ((struct ssysdep_conn *) qconn->psysdep)->ord;
 	  break;
-	case UUCONF_PORTTYPE_MODEM:
 	case UUCONF_PORTTYPE_DIRECT:
 	  oport = ((struct ssysdep_conn *) qconn->psysdep)->o;
 	  break;
@@ -1122,7 +1118,6 @@ fsysdep_shell (struct sconnection *qconn, const char *zcmd, enum tshell_cmd tcmd
 	  oread = ((struct ssysdep_conn *) qconn->psysdep)->ord;
 	  owrite = ((struct ssysdep_conn *) qconn->psysdep)->owr;
 	  break;
-	case UUCONF_PORTTYPE_MODEM:
 	case UUCONF_PORTTYPE_DIRECT:
 	  oread = owrite = ((struct ssysdep_conn *) qconn->psysdep)->o;
 	  break;

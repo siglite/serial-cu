@@ -46,7 +46,6 @@ static const char * const azPtype_names[] =
 {
   NULL,
   "stdin",
-  "modem",
   "direct",
   "pipe"
 };
@@ -82,42 +81,6 @@ static const struct cmdtab_offset asPstdin_cmds[] =
 };
 
 #define CSTDIN_CMDS (sizeof asPstdin_cmds / sizeof asPstdin_cmds[0])
-
-/* The modem port command table.  */
-static const struct cmdtab_offset asPmodem_cmds[] =
-{
-  { "device", UUCONF_CMDTABTYPE_STRING,
-      offsetof (struct uuconf_port, uuconf_u.uuconf_smodem.uuconf_zdevice),
-      NULL },
-  { "baud", UUCONF_CMDTABTYPE_LONG,
-      offsetof (struct uuconf_port, uuconf_u.uuconf_smodem.uuconf_ibaud),
-      NULL },
-  { "speed", UUCONF_CMDTABTYPE_LONG,
-      offsetof (struct uuconf_port, uuconf_u.uuconf_smodem.uuconf_ibaud),
-      NULL },
-  { "baud-range", UUCONF_CMDTABTYPE_FN | 3,
-      offsetof (struct uuconf_port, uuconf_u.uuconf_smodem), ipbaud_range },
-  { "speed-range", UUCONF_CMDTABTYPE_FN | 3,
-      offsetof (struct uuconf_port, uuconf_u.uuconf_smodem), ipbaud_range },
-  { "carrier", UUCONF_CMDTABTYPE_BOOLEAN,
-      offsetof (struct uuconf_port, uuconf_u.uuconf_smodem.uuconf_fcarrier),
-      NULL },
-  { "hardflow", UUCONF_CMDTABTYPE_BOOLEAN,
-      offsetof (struct uuconf_port, uuconf_u.uuconf_smodem.uuconf_fhardflow),
-      NULL },
-  { "dial-device", UUCONF_CMDTABTYPE_STRING,
-      offsetof (struct uuconf_port,
-		uuconf_u.uuconf_smodem.uuconf_zdial_device),
-      NULL },
-  { "dialer", UUCONF_CMDTABTYPE_FN | 0,
-      offsetof (struct uuconf_port, uuconf_u.uuconf_smodem), ipdialer },
-  { "dialer-sequence", UUCONF_CMDTABTYPE_FULLSTRING,
-      offsetof (struct uuconf_port, uuconf_u.uuconf_smodem.uuconf_pzdialer),
-      NULL },
-  { NULL, 0, 0, NULL }
-};
-
-#define CMODEM_CMDS (sizeof asPmodem_cmds / sizeof asPmodem_cmds[0])
 
 /* The direct port command table.  */
 static const struct cmdtab_offset asPdirect_cmds[] =
@@ -156,9 +119,8 @@ static const struct cmdtab_offset asPpipe_cmds[] =
 #undef max
 #define max(i1, i2) ((i1) > (i2) ? (i1) : (i2))
 #define CCMDS \
-  max (max (max (CPORT_CMDS, CSTDIN_CMDS), CMODEM_CMDS), \
-       max (CDIRECT_CMDS, CPIPE_CMDS))
-
+  max (max (CPORT_CMDS, CSTDIN_CMDS), max (CDIRECT_CMDS, CPIPE_CMDS))
+
 /* Handle a command passed to a port from a Taylor UUCP configuration
    file.  This can be called when reading either the port file or the
    sys file.  The return value may have UUCONF_CMDTABRET_KEEP set, but
@@ -191,9 +153,7 @@ _uuconf_iport_cmd (struct sglobal *qglobal, int argc, char **argv, struct uuconf
 	 appears before the "type" command.  This supports defaults,
 	 in that the default may be of a specific type while future
 	 ports in the same file may be of other types.  */
-      if (! fgottype)
-	ttype = UUCONF_PORTTYPE_MODEM;
-      else
+      if (fgottype)
 	{
 	  if (argc != 2)
 	    return UUCONF_SYNTAX_ERROR;
@@ -215,17 +175,6 @@ _uuconf_iport_cmd (struct sglobal *qglobal, int argc, char **argv, struct uuconf
 	{
 	default:
 	case UUCONF_PORTTYPE_STDIN:
-	  break;
-	case UUCONF_PORTTYPE_MODEM:
-	  qport->uuconf_u.uuconf_smodem.uuconf_zdevice = NULL;
-	  qport->uuconf_u.uuconf_smodem.uuconf_zdial_device = NULL;
-	  qport->uuconf_u.uuconf_smodem.uuconf_ibaud = 0L;
-	  qport->uuconf_u.uuconf_smodem.uuconf_ilowbaud = 0L;
-	  qport->uuconf_u.uuconf_smodem.uuconf_ihighbaud = 0L;
-	  qport->uuconf_u.uuconf_smodem.uuconf_fcarrier = TRUE;
-	  qport->uuconf_u.uuconf_smodem.uuconf_fhardflow = TRUE;
-	  qport->uuconf_u.uuconf_smodem.uuconf_pzdialer = NULL;
-	  qport->uuconf_u.uuconf_smodem.uuconf_qdialer = NULL;
 	  break;
 	case UUCONF_PORTTYPE_DIRECT:
 	  qport->uuconf_u.uuconf_sdirect.uuconf_zdevice = NULL;
@@ -259,10 +208,6 @@ _uuconf_iport_cmd (struct sglobal *qglobal, int argc, char **argv, struct uuconf
 	case UUCONF_PORTTYPE_STDIN:
 	  qcmds = asPstdin_cmds;
 	  ccmds = CSTDIN_CMDS;
-	  break;
-	case UUCONF_PORTTYPE_MODEM:
-	  qcmds = asPmodem_cmds;
-	  ccmds = CMODEM_CMDS;
 	  break;
 	case UUCONF_PORTTYPE_DIRECT:
 	  qcmds = asPdirect_cmds;
@@ -307,21 +252,10 @@ ipproto_param (pointer pglobal, int argc, char **argv, pointer pvar, pointer pin
 static int
 ipbaud_range (pointer pglobal, int argc ATTRIBUTE_UNUSED, char **argv, pointer pvar, pointer pinfo ATTRIBUTE_UNUSED)
 {
-  struct sglobal *qglobal = (struct sglobal *) pglobal;
-  struct uuconf_modem_port *qmodem = (struct uuconf_modem_port *) pvar;
-  int iret;
-
-  iret = _uuconf_iint (qglobal, argv[1],
-		       (pointer) &qmodem->uuconf_ilowbaud, FALSE);
-  if ((iret &~ UUCONF_CMDTABRET_KEEP) != UUCONF_SUCCESS)
-    return iret;
-
-  iret |= _uuconf_iint (qglobal, argv[2],
-			(pointer) &qmodem->uuconf_ihighbaud, FALSE);
-
-  return iret;
+  /* FIXME: */
+  return 0;
 }
-
+
 /* Handle the "dialer" command.  If there is one argument, this names
    a dialer.  Otherwise, the remaining arguments form a command
    describing the dialer.  */
@@ -329,77 +263,8 @@ ipbaud_range (pointer pglobal, int argc ATTRIBUTE_UNUSED, char **argv, pointer p
 static int
 ipdialer (pointer pglobal, int argc, char **argv, pointer pvar, pointer pinfo)
 {
-  struct sglobal *qglobal = (struct sglobal *) pglobal;
-  struct uuconf_modem_port *qmodem = (struct uuconf_modem_port *) pvar;
-  struct uuconf_port *qport = (struct uuconf_port *) pinfo;
-  int iret;
-
-  if (argc < 2)
-    return UUCONF_SYNTAX_ERROR | UUCONF_CMDTABRET_EXIT;
-
-  if (argc > 2)
-    {
-      if (qmodem->uuconf_qdialer == NULL)
-	{
-	  struct uuconf_dialer *qnew;
-	  size_t clen;
-
-	  qnew = ((struct uuconf_dialer *)
-		  uuconf_malloc (qport->uuconf_palloc,
-				  sizeof (struct uuconf_dialer)));
-	  if (qnew == NULL)
-	    {
-	      qglobal->ierrno = errno;
-	      return (UUCONF_MALLOC_FAILED
-		      | UUCONF_ERROR_ERRNO
-		      | UUCONF_CMDTABRET_EXIT);
-	    }
-
-	  _uuconf_uclear_dialer (qnew);
-
-	  if (qport->uuconf_zname == NULL)
-	    qnew->uuconf_zname = (char *) "default port file dialer";
-	  else
-	    {
-	      clen = strlen (qport->uuconf_zname);
-	      qnew->uuconf_zname =
-		(char *) uuconf_malloc (qport->uuconf_palloc,
-					clen + sizeof " dialer");
-	      if (qnew->uuconf_zname == NULL)
-		{
-		  qglobal->ierrno = errno;
-		  return (UUCONF_MALLOC_FAILED
-			  | UUCONF_ERROR_ERRNO
-			  | UUCONF_CMDTABRET_EXIT);
-		}
-
-	      memcpy ((pointer) qnew->uuconf_zname,
-		      (pointer) qport->uuconf_zname, clen);
-	      memcpy ((pointer) (qnew->uuconf_zname + clen),
-		      (pointer) " dialer", sizeof " dialer");
-	    }
-
-	  qnew->uuconf_palloc = qport->uuconf_palloc;
-
-	  qmodem->uuconf_qdialer = qnew;
-	}
-
-      iret = _uuconf_idialer_cmd (qglobal, argc - 1, argv + 1,
-				  qmodem->uuconf_qdialer);
-      if ((iret &~ UUCONF_CMDTABRET_KEEP) != UUCONF_SUCCESS)
-	iret |= UUCONF_CMDTABRET_EXIT;
-      return iret;
-    }
-  else
-    {
-      qmodem->uuconf_pzdialer = NULL;
-      iret = _uuconf_iadd_string (qglobal, argv[1], TRUE, FALSE,
-				  &qmodem->uuconf_pzdialer,
-				  qport->uuconf_palloc);
-      if (iret != UUCONF_SUCCESS)
-	iret |= UUCONF_CMDTABRET_EXIT;
-      return iret;
-    }
+  /* FIXME: */
+  return 0;
 }
 
 /* Give an error for an unknown port command.  */

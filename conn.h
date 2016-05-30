@@ -289,32 +289,8 @@ extern boolean fconn_dial_sequence P((struct sconnection *qconn,
 				      struct uuconf_dialer *qdialer,
 				      enum tdialerfound *ptdialerfound));
 
-/* Dialing out on a modem is partially system independent.  This is
-   the modem dialing routine.  */
-extern boolean fmodem_dial P((struct sconnection *qconn, pointer puuconf,
-			      const struct uuconf_system *qsys,
-			      const char *zphone,
-			      struct uuconf_dialer *qdialer,
-			      enum tdialerfound *ptdialerfound));
-
-/* Begin dialing out.  This should open the dialer device if there is
-   one, toggle DTR if requested and possible, and tell the port to
-   ignore carrier.  It should return FALSE on error.  */
-extern boolean fsysdep_modem_begin_dial P((struct sconnection *qconn,
-					   struct uuconf_dialer *qdial));
-
-/* Finish dialing out on a modem.  This should close the dialer device
-   if there is one.  If the dialer and the port both support carrier,
-   the connection should be told to pay attention to carrier.  If it
-   is possible to wait for carrier to come on, and the dialer and the
-   port both the port support carrier, it should wait until carrier
-   comes on.  */
-extern boolean fsysdep_modem_end_dial P((struct sconnection *qconn,
-					 struct uuconf_dialer *qdial));
-
 /* System dependent initialization routines.  */
 extern boolean fsysdep_stdin_init P((struct sconnection *qconn));
-extern boolean fsysdep_modem_init P((struct sconnection *qconn));
 extern boolean fsysdep_direct_init P((struct sconnection *qconn));
 extern boolean fsysdep_pipe_init P((struct sconnection *qconn));
 

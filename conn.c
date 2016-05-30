@@ -47,8 +47,6 @@ fconn_init (struct uuconf_port *qport, struct sconnection *qconn, enum uuconf_po
     {
     case UUCONF_PORTTYPE_STDIN:
       return fsysdep_stdin_init (qconn);
-    case UUCONF_PORTTYPE_MODEM:
-      return fsysdep_modem_init (qconn);
     case UUCONF_PORTTYPE_DIRECT:
       return fsysdep_direct_init (qconn);
     case UUCONF_PORTTYPE_PIPE:
@@ -132,17 +130,7 @@ fconn_open (struct sconnection *qconn, long int ibaud, long int ihighbaud, boole
 
       qport = qconn->qport;
       ibaud = ihighbaud;
-      if (qport->uuconf_ttype == UUCONF_PORTTYPE_MODEM)
-	{
-	  if (qport->uuconf_u.uuconf_smodem.uuconf_ilowbaud != 0)
-	    {
-	      if (qport->uuconf_u.uuconf_smodem.uuconf_ihighbaud < ibaud)
-		ibaud = qport->uuconf_u.uuconf_smodem.uuconf_ihighbaud;
-	    }
-	  else if (qport->uuconf_u.uuconf_smodem.uuconf_ibaud != 0)
-	    ibaud = qport->uuconf_u.uuconf_smodem.uuconf_ibaud;
-	}
-      else if (qport->uuconf_ttype == UUCONF_PORTTYPE_DIRECT)
+      if (qport->uuconf_ttype == UUCONF_PORTTYPE_DIRECT)
 	{
 	  if (qport->uuconf_u.uuconf_sdirect.uuconf_ibaud != 0)
 	    ibaud = qport->uuconf_u.uuconf_sdirect.uuconf_ibaud;
@@ -458,70 +446,4 @@ fconn_dial_sequence (qconn, puuconf, pzdialer, qsys, zphone, qdialer,
     }
 
   return TRUE;
-}
-
-/* Modem dialing routine.  */
-
-/*ARGSUSED*/
-boolean
-fmodem_dial (struct sconnection *qconn, pointer puuconf, const struct uuconf_system *qsys, const char *zphone, struct uuconf_dialer *qdialer, enum tdialerfound *ptdialerfound)
-{
-  char **pzdialer;
-
-  *ptdialerfound = DIALERFOUND_FALSE;
-
-  pzdialer = qconn->qport->uuconf_u.uuconf_smodem.uuconf_pzdialer;
-  if (pzdialer != NULL && *pzdialer != NULL)
-    {
-      int iuuconf;
-      boolean fret;
-
-      iuuconf = uuconf_dialer_info (puuconf, *pzdialer, qdialer);
-      if (iuuconf == UUCONF_NOT_FOUND)
-	{
-	  ulog (LOG_ERROR, "%s: Dialer not found", *pzdialer);
-	  return FALSE;
-	}
-      else if (iuuconf != UUCONF_SUCCESS)
-	{
-	  ulog_uuconf (LOG_ERROR, puuconf, iuuconf);
-	  return FALSE;
-	}
-
-      *ptdialerfound = DIALERFOUND_FREE;
-
-      fret = (fsysdep_modem_begin_dial (qconn, qdialer)
-	      && fconn_dial_sequence (qconn, puuconf, pzdialer, qsys, zphone,
-				      qdialer, ptdialerfound)
-	      && fsysdep_modem_end_dial (qconn, qdialer));
-
-      if (! fret)
-	(void) uuconf_dialer_free (puuconf, qdialer);
-
-      return fret;
-    }
-  else if (qconn->qport->uuconf_u.uuconf_smodem.uuconf_qdialer != NULL)
-    {
-      struct uuconf_dialer *q;
-      const char *zname;
-
-      q = qconn->qport->uuconf_u.uuconf_smodem.uuconf_qdialer;
-      *qdialer = *q;
-      *ptdialerfound = DIALERFOUND_TRUE;
-
-      if (qconn->qport == NULL)
-	zname = NULL;
-      else
-	zname = qconn->qport->uuconf_zname;
-
-      return (fsysdep_modem_begin_dial (qconn, q)
-	      && fchat (qconn, puuconf, &q->uuconf_schat, qsys, q,
-			zphone, FALSE, zname, iconn_baud (qconn))
-	      && fsysdep_modem_end_dial (qconn, q));
-    }
-  else
-    {
-      ulog (LOG_ERROR, "No dialer information");
-      return FALSE;
-    }
 }

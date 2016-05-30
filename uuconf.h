@@ -350,8 +350,6 @@ enum uuconf_porttype
   /* Read from standard input and write to standard output.  Not
      normally used.  */
   UUCONF_PORTTYPE_STDIN,
-  /* A modem port.  */
-  UUCONF_PORTTYPE_MODEM,
   /* A direct connect port.  */
   UUCONF_PORTTYPE_DIRECT,
   /* A pipe port.  Not supported on all systems.  */
@@ -363,35 +361,6 @@ enum uuconf_porttype
 struct uuconf_stdin_port
 {
   int uuconf_idummy;
-};
-
-/* Additional information for a modem port.  */
-
-struct uuconf_modem_port
-{
-  /* The device name.  May be NULL, in which case the port name is
-     used instead.  */
-  char *uuconf_zdevice;
-  /* The device name to send the dialer chat script to.  May be NULL,
-     in which case the chat script is sent to the usual device.  */
-  char *uuconf_zdial_device;
-  /* The default baud rate (speed).  If zero, there is no default.  */
-  long uuconf_ibaud;
-  /* The low baud rate, if a range is used.  If zero, a range is not
-     used and ihighbaud should be ignored.  */
-  long uuconf_ilowbaud;
-  /* The high baud rate, if ilowbaud is non-zero.  */
-  long uuconf_ihighbaud;
-  /* Non-zero if the port supports carrier detect.  */
-  int uuconf_fcarrier;
-  /* Non-zero if the port supports hardware flow control.  */
-  int uuconf_fhardflow;
-  /* A NULL terminated sequence of dialer/token pairs (element 0 is a
-     dialer name, element 1 is a token, etc.)  May be NULL, in which
-     case qdialer should not be NULL.  */
-  char **uuconf_pzdialer;
-  /* Specific dialer information.  Only used if pzdialer is NULL.  */
-  struct uuconf_dialer *uuconf_qdialer;
 };
 
 /* Additional information for a direct connect port.  */
@@ -442,7 +411,6 @@ struct uuconf_port
   union
     {
       struct uuconf_stdin_port uuconf_sstdin;
-      struct uuconf_modem_port uuconf_smodem;
       struct uuconf_direct_port uuconf_sdirect;
       struct uuconf_pipe_port uuconf_spipe;
     } uuconf_u;

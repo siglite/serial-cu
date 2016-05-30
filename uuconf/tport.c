@@ -154,26 +154,7 @@ uuconf_taylor_find_port (pglobal, zname, ibaud, ihighbaud, pifn, pinfo,
 	    {
 	      if (ibaud != 0)
 		{
-		  if (qport->uuconf_ttype == UUCONF_PORTTYPE_MODEM)
-		    {
-		      long imbaud, imhigh, imlow;
-
-		      imbaud = qport->uuconf_u.uuconf_smodem.uuconf_ibaud;
-		      imhigh = qport->uuconf_u.uuconf_smodem.uuconf_ihighbaud;
-		      imlow = qport->uuconf_u.uuconf_smodem.uuconf_ilowbaud;
-
-		      if (imbaud == 0 && imlow == 0)
-			;
-		      else if (ibaud <= imbaud && imbaud <= ihighbaud)
-			;
-		      else if (imlow != 0
-			       && imlow <= ihighbaud
-			       && imhigh >= ibaud)
-			;
-		      else
-			fmatch = FALSE;
-		    }
-		  else if (qport->uuconf_ttype == UUCONF_PORTTYPE_DIRECT)
+		  if (qport->uuconf_ttype == UUCONF_PORTTYPE_DIRECT)
 		    {
 		      long idbaud;
 
