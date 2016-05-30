@@ -30,7 +30,6 @@
 /* These structures are used in prototypes but are not defined in this
    header file.  */
 struct uuconf_system;
-struct uuconf_dialer;
 #endif
 
 /* This structure represents a connection.  */
@@ -43,18 +42,6 @@ struct sconnection
   pointer psysdep;
   /* Pointer to system independent information.  */
   struct uuconf_port *qport;
-};
-
-/* Whether fconn_dial got a dialer.  */
-
-enum tdialerfound
-{
-  /* Did not find a dialer.  */
-  DIALERFOUND_FALSE,
-  /* Found a dialer which does not need to be freed.  */
-  DIALERFOUND_TRUE,
-  /* Found a dialer which does need to be freed.  */
-  DIALERFOUND_FREE
 };
 
 /* Parity settings to pass to fconn_set.  */
@@ -120,17 +107,8 @@ struct sconncmds
   /* Close the connection.  */
   boolean (*pfclose) P((struct sconnection *qconn,
 			pointer puuconf,
-			struct uuconf_dialer *qdialer,
+			struct dummy *dummy,
 			boolean fsuccess));
-  /* Dial a number on a connection.  This set *qdialer to the dialer
-     used, if any, and sets *ptdialerfound appropriately.  The qsys
-     and zphone arguments are for the chat script.  This field may be
-     NULL.  */
-  boolean (*pfdial) P((struct sconnection *qconn, pointer puuconf,
-		       const struct uuconf_system *qsys,
-		       const char *zphone,
-		       struct uuconf_dialer *qdialer,
-		       enum tdialerfound *ptdialerfound));
   /* Read data from a connection, with a timeout in seconds.  When
      called *pclen is the length of the buffer; on successful return
      *pclen is the number of bytes read into the buffer.  The cmin
@@ -201,18 +179,8 @@ extern boolean fconn_open P((struct sconnection *qconn, long ibaud,
    conversation completed normally, FALSE if it is being aborted.  */
 extern boolean fconn_close P((struct sconnection *qconn,
 			      pointer puuconf,
-			      struct uuconf_dialer *qdialer,
+			      struct dummy *dummy,
 			      boolean fsuccess));
-
-/* Dial out on a connection.  The qsys and zphone arguments are for
-   the chat scripts; zphone is the phone number to dial.  If qdialer
-   is not NULL, *qdialer will be set to the dialer information used if
-   any; *ptdialerfound will be set appropriately.  */
-extern boolean fconn_dial P((struct sconnection *q, pointer puuconf,
-			     const struct uuconf_system *qsys,
-			     const char *zphone,
-			     struct uuconf_dialer *qdialer,
-			     enum tdialerfound *ptdialerfound));
 
 /* Read from a connection.
    zbuf -- buffer to read bytes into

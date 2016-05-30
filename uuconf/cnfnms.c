@@ -40,10 +40,6 @@ uuconf_config_files (pointer pglobal, struct uuconf_config_file_names *qnames)
     (const char * const *) qglobal->qprocess->pzsysfiles;
   qnames->uuconf_pztaylor_port =
     (const char * const *) qglobal->qprocess->pzportfiles;
-  qnames->uuconf_pztaylor_dial =
-    (const char * const *) qglobal->qprocess->pzdialfiles;
-  qnames->uuconf_pzdialcode =
-    (const char * const *) qglobal->qprocess->pzdialcodefiles;
   qnames->uuconf_pztaylor_pwd =
     (const char * const *) qglobal->qprocess->pzpwdfiles;
   qnames->uuconf_pztaylor_call =

@@ -60,8 +60,6 @@ enum tstatus_type
   STATUS_COMPLETE,
   /* Port unavailable.  */
   STATUS_PORT_FAILED,
-  /* Dial failed.  */
-  STATUS_DIAL_FAILED,
   /* Login failed.  */
   STATUS_LOGIN_FAILED,
   /* Handshake failed.  */

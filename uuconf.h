@@ -384,38 +384,7 @@ struct uuconf_port
       struct uuconf_pipe_port uuconf_spipe;
     } uuconf_u;
 };
-
-/* Information kept about a dialer.  */
 
-struct uuconf_dialer
-{
-  /* The name of the dialer.  */
-  char *uuconf_zname;
-  /* The string to send when a `=' appears in the phone number.  */
-  char *uuconf_zdialtone;
-  /* The string to send when a `-' appears in the phone number.  */
-  char *uuconf_zpause;
-  /* Non-zero if the dialer supports carrier detect.  */
-  int uuconf_fcarrier;
-  /* The number of seconds to wait for carrier after the chat script
-     is complete.  Only used if fcarrier is non-zero.  Only supported
-     on some systems.  */
-  int uuconf_ccarrier_wait;
-  /* If non-zero, DTR should be toggled before dialing.  Only
-     supported on some systems.  */
-  int uuconf_fdtr_toggle;
-  /* If non-zero, sleep for 1 second after toggling DTR.  Ignored if
-     fdtr_toggle is zero.  */
-  int uuconf_fdtr_toggle_wait;
-  /* Array of protocol parameters.  Ends in an entry with a
-     uuconf_bproto field of '\0'.  May be NULL.  */
-  struct uuconf_proto_param *uuconf_qproto_params;
-  /* The set of reliability bits.  */
-  int uuconf_ireliable;
-  /* Memory allocation block for the dialer.  */
-  UUCONF_POINTER uuconf_palloc;
-};
-
 /* Information returned by uuconf_config_files.  Any field in this
    struct may be NULL, indicating that the corresponding files will
    not be read.  */
@@ -428,16 +397,12 @@ struct uuconf_config_file_names
   UUCONF_CONST char * UUCONF_CONST *uuconf_pztaylor_sys;
   /* Taylor UUCP port file names; NULL terminated.  */
   UUCONF_CONST char * UUCONF_CONST *uuconf_pztaylor_port;
-  /* Taylor UUCP dial file names; NULL terminated.  */
-  UUCONF_CONST char * UUCONF_CONST *uuconf_pztaylor_dial;
-  /* UUCP dialcode file names; NULL terminated.  */
-  UUCONF_CONST char * UUCONF_CONST *uuconf_pzdialcode;
   /* Taylor UUCP passwd file names; NULL terminated.  */
   UUCONF_CONST char * UUCONF_CONST *uuconf_pztaylor_pwd;
   /* Taylor UUCP call file names; NULL terminated.  */
   UUCONF_CONST char * UUCONF_CONST *uuconf_pztaylor_call;
 };
-
+
 /* Reliability bits for the ireliable field of ports and dialers.
    These bits are used to decide which protocol to run.  A given
    protocol will have a set of these bits, and each of them must be
@@ -707,32 +672,6 @@ extern int uuconf_port_free (void *uuconf_pglobal,
   (uuconf_free_block ((q)->uuconf_palloc), UUCONF_SUCCESS)
 #endif
 
-/* Get the names of all known dialers.  This sets sets *ppzdialers to
-   point to an array of dialer names.  The list of names is NULL
-   terminated.  The array is allocated using malloc, as is each
-   element of the array, and they may all be passed to free when they
-   are no longer needed.  */
-extern int uuconf_dialer_names (void *uuconf_pglobal,
-				char ***uuconf_ppzdialers);
-
-/* Get the information for the dialer zdialer.  This sets the fields
-   in *qdialer.  */
-extern int uuconf_dialer_info (void *uuconf_pglobal,
-			       const char *uuconf_zdialer,
-			       struct uuconf_dialer *uuconf_qdialer);
-
-/* Free the memory occupied by system information returned by
-   uuconf_dialer_info (or any of the configuration file specific
-   routines described below).  After this is called, the contents of
-   the structure shall not be referred to.  */
-extern int uuconf_dialer_free (void *uuconf_pglobal,
-			       struct uuconf_dialer *uuconf_qsys);
-
-#ifdef __OPTIMIZE__
-#define uuconf_dialer_free(qglob, q) \
-  (uuconf_free_block ((q)->uuconf_palloc), UUCONF_SUCCESS)
-#endif
-
 /* Get the configuration file names.  The fields in the returned
    struct should not be freed.  */
 extern int uuconf_config_files (void *uuconf_pglobal,
@@ -857,13 +796,6 @@ extern int uuconf_validate (void *uuconf_pglobal,
 extern int uuconf_remote_unknown (void *uuconf_pglobal,
 				  char **pzname);
 
-/* Translate a dial code.  This sets *pznum to an malloced string.
-   This will look up the entire zdial string in the dialcode file, so
-   for normal use the alphabetic prefix should be separated.  */
-extern int uuconf_dialcode (void *uuconf_pglobal,
-			    const char *uuconf_zdial,
-			    char **uuconf_pznum);
-
 /* Compare two grades, returning < 0 if b1 should be executed before
    b2, == 0 if they are the same, or > 0 if b1 should be executed
    after b2.  This can not fail, and does not return a standard uuconf
@@ -882,9 +814,6 @@ extern int uuconf_system_local ();
 extern int uuconf_system_free ();
 extern int uuconf_find_port ();
 extern int uuconf_port_free ();
-extern int uuconf_dialer_names ();
-extern int uuconf_dialer_info ();
-extern int uuconf_dialer_free ();
 extern int uuconf_config_files ();
 extern int uuconf_localname ();
 extern int uuconf_login_localname ();
@@ -907,8 +836,6 @@ extern int uuconf_grade_cmp ();
 #define uuconf_system_free(qglob, q) \
   (uuconf_free_block ((q)->uuconf_palloc), UUCONF_SUCCESS)
 #define uuconf_port_free(qglob, q) \
-  (uuconf_free_block ((q)->uuconf_palloc), UUCONF_SUCCESS)
-#define uuconf_dialer_free(qglob, q) \
   (uuconf_free_block ((q)->uuconf_palloc), UUCONF_SUCCESS)
 #endif
 
@@ -971,19 +898,6 @@ extern int uuconf_taylor_find_port (void *uuconf_pglobal,
 				    void *uuconf_pinfo,
 				    struct uuconf_port *uuconf_qport);
 
-/* Get the names of all dialers listed in the Taylor UUCP
-   configuration files.  This sets *ppzdialers to point to an array of
-   dialer names.  The list of names is NULL terminated.  The array is
-   allocated using malloc, as is each element of the array.  */
-extern int uuconf_taylor_dialer_names (void *uuconf_pglobal,
-				       char ***uuconf_ppzdialers);
-
-/* Get the information for the dialer zdialer from the Taylor UUCP
-   configuration files.  This sets the fields in *qdialer.  */
-extern int uuconf_taylor_dialer_info (void *uuconf_pglobal,
-				      const char *uuconf_zdialer,
-				      struct uuconf_dialer *uuconf_qdialer);
-
 /* Get the local node name that should be used, given a login name,
    considering only the ``myname'' command in the Taylor UUCP
    configuration files.  If the function returns UUCONF_SUCCESS,
@@ -1018,8 +932,6 @@ extern int uuconf_taylor_system_names ();
 extern int uuconf_taylor_system_info ();
 extern int uuconf_taylor_system_unknown ();
 extern int uuconf_taylor_find_port ();
-extern int uuconf_taylor_dialer_names ();
-extern int uuconf_taylor_dialer_info ();
 extern int uuconf_taylor_login_localname ();
 extern int uuconf_taylor_callout ();
 extern int uuconf_taylor_validate ();
@@ -1335,5 +1247,10 @@ extern /* void */ uuconf_free ();
 extern /* void */ uuconf_free_block ();
 
 #endif /* ! UUCONF_ANSI_C */
-
+
+/* fake dialer_conf */
+struct dummy {
+  int dummy;
+};
+
 #endif /* ! defined (UUCONF_H) */

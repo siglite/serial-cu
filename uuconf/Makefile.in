@@ -110,25 +110,23 @@ am_libuuconf_a_OBJECTS = addblk.$(OBJEXT) addstr.$(OBJEXT) \
 	allblk.$(OBJEXT) alloc.$(OBJEXT) base.$(OBJEXT) bool.$(OBJEXT) \
 	callin.$(OBJEXT) calout.$(OBJEXT) cmdarg.$(OBJEXT) \
 	cmdfil.$(OBJEXT) cmdlin.$(OBJEXT) cnfnms.$(OBJEXT) \
-	debfil.$(OBJEXT) deblev.$(OBJEXT) diacod.$(OBJEXT) \
-	dial.$(OBJEXT) diasub.$(OBJEXT) dnams.$(OBJEXT) \
-	errno.$(OBJEXT) errstr.$(OBJEXT) filnam.$(OBJEXT) \
-	freblk.$(OBJEXT) fredia.$(OBJEXT) free.$(OBJEXT) \
-	freprt.$(OBJEXT) fresys.$(OBJEXT) grdcmp.$(OBJEXT) \
-	iniglb.$(OBJEXT) init.$(OBJEXT) int.$(OBJEXT) lckdir.$(OBJEXT) \
-	lineno.$(OBJEXT) llocnm.$(OBJEXT) local.$(OBJEXT) \
-	locnm.$(OBJEXT) logfil.$(OBJEXT) maxuxq.$(OBJEXT) \
-	mrgblk.$(OBJEXT) paramc.$(OBJEXT) port.$(OBJEXT) \
-	prtsub.$(OBJEXT) pubdir.$(OBJEXT) rdlocs.$(OBJEXT) \
-	reliab.$(OBJEXT) remunk.$(OBJEXT) runuxq.$(OBJEXT) \
-	sinfo.$(OBJEXT) snams.$(OBJEXT) split.$(OBJEXT) \
-	spool.$(OBJEXT) stafil.$(OBJEXT) strip.$(OBJEXT) \
-	syssub.$(OBJEXT) tcalou.$(OBJEXT) tdial.$(OBJEXT) \
-	tdialc.$(OBJEXT) tdnams.$(OBJEXT) tgcmp.$(OBJEXT) \
-	thread.$(OBJEXT) time.$(OBJEXT) tinit.$(OBJEXT) \
-	tlocnm.$(OBJEXT) tport.$(OBJEXT) tportc.$(OBJEXT) \
-	tsinfo.$(OBJEXT) tsnams.$(OBJEXT) tsys.$(OBJEXT) \
-	tval.$(OBJEXT) ugtlin.$(OBJEXT) unk.$(OBJEXT) val.$(OBJEXT)
+	debfil.$(OBJEXT) deblev.$(OBJEXT) errno.$(OBJEXT) \
+	errstr.$(OBJEXT) filnam.$(OBJEXT) freblk.$(OBJEXT) \
+	free.$(OBJEXT) freprt.$(OBJEXT) fresys.$(OBJEXT) \
+	grdcmp.$(OBJEXT) iniglb.$(OBJEXT) init.$(OBJEXT) int.$(OBJEXT) \
+	lckdir.$(OBJEXT) lineno.$(OBJEXT) llocnm.$(OBJEXT) \
+	local.$(OBJEXT) locnm.$(OBJEXT) logfil.$(OBJEXT) \
+	maxuxq.$(OBJEXT) mrgblk.$(OBJEXT) paramc.$(OBJEXT) \
+	port.$(OBJEXT) prtsub.$(OBJEXT) pubdir.$(OBJEXT) \
+	rdlocs.$(OBJEXT) reliab.$(OBJEXT) remunk.$(OBJEXT) \
+	runuxq.$(OBJEXT) sinfo.$(OBJEXT) snams.$(OBJEXT) \
+	split.$(OBJEXT) spool.$(OBJEXT) stafil.$(OBJEXT) \
+	strip.$(OBJEXT) syssub.$(OBJEXT) tcalou.$(OBJEXT) \
+	tgcmp.$(OBJEXT) thread.$(OBJEXT) time.$(OBJEXT) \
+	tinit.$(OBJEXT) tlocnm.$(OBJEXT) tport.$(OBJEXT) \
+	tportc.$(OBJEXT) tsinfo.$(OBJEXT) tsnams.$(OBJEXT) \
+	tsys.$(OBJEXT) tval.$(OBJEXT) ugtlin.$(OBJEXT) unk.$(OBJEXT) \
+	val.$(OBJEXT)
 libuuconf_a_OBJECTS = $(am_libuuconf_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -288,13 +286,13 @@ top_srcdir = @top_srcdir@
 noinst_LIBRARIES = libuuconf.a
 libuuconf_a_SOURCES = addblk.c addstr.c allblk.c alloc.c base.c bool.c \
 	callin.c calout.c cmdarg.c cmdfil.c cmdlin.c cnfnms.c \
-	debfil.c deblev.c diacod.c dial.c diasub.c dnams.c errno.c errstr.c \
-	filnam.c freblk.c fredia.c free.c freprt.c fresys.c grdcmp.c \
+	debfil.c deblev.c errno.c errstr.c \
+	filnam.c freblk.c free.c freprt.c fresys.c grdcmp.c \
 	iniglb.c init.c int.c lckdir.c lineno.c llocnm.c \
 	local.c locnm.c logfil.c maxuxq.c mrgblk.c paramc.c port.c \
 	prtsub.c pubdir.c rdlocs.c reliab.c remunk.c runuxq.c \
 	sinfo.c snams.c split.c spool.c stafil.c strip.c syssub.c \
-	tcalou.c tdial.c tdialc.c tdnams.c tgcmp.c thread.c time.c \
+	tcalou.c tgcmp.c thread.c time.c \
 	tinit.c tlocnm.c tport.c tportc.c tsinfo.c tsnams.c tsys.c \
 	tval.c ugtlin.c unk.c val.c alloc.h syshdr.h uucnfi.h
 
@@ -361,15 +359,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cnfnms.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/debfil.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/deblev.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/diacod.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dial.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/diasub.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dnams.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/errno.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/errstr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/filnam.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freblk.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fredia.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/free.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freprt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fresys.Po@am__quote@
@@ -401,9 +394,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strip.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/syssub.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcalou.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tdial.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tdialc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tdnams.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tgcmp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/thread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/time.Po@am__quote@

@@ -52,14 +52,9 @@ static boolean fspipe_open P((struct sconnection *qconn, long ibaud,
 			      boolean fwait, boolean fuser));
 static boolean fspipe_close P((struct sconnection *qconn,
 			       pointer puuconf,
-			       struct uuconf_dialer *qdialer,
+			       struct dummy *dummy,
 			       boolean fsuccess));
-static boolean fspipe_dial P((struct sconnection *qconn, pointer puuconf,
-			      const struct uuconf_system *qsys,
-			      const char *zphone,
-			      struct uuconf_dialer *qdialer,
-			      enum tdialerfound *ptdialer));
-
+
 /* The command table for standard input ports.  */
 
 static const struct sconncmds spipecmds =
@@ -69,7 +64,6 @@ static const struct sconncmds spipecmds =
   NULL, /* pfunlock */
   fspipe_open,
   fspipe_close,
-  fspipe_dial,
   fsdouble_read,
   fsdouble_write,
   fsysdep_conn_io,
@@ -125,7 +119,7 @@ fspipe_open (struct sconnection *qconn ATTRIBUTE_UNUSED, long int ibaud ATTRIBUT
 
 /*ARGSUSED*/
 static boolean
-fspipe_close (struct sconnection *qconn, pointer puuconf ATTRIBUTE_UNUSED, struct uuconf_dialer *qdialer ATTRIBUTE_UNUSED, boolean fsuccess ATTRIBUTE_UNUSED)
+fspipe_close (struct sconnection *qconn, pointer puuconf ATTRIBUTE_UNUSED, struct dummy *dummy ATTRIBUTE_UNUSED, boolean fsuccess ATTRIBUTE_UNUSED)
 {
   struct ssysdep_conn *qsysdep;
   boolean fret;
@@ -170,62 +164,7 @@ fspipe_close (struct sconnection *qconn, pointer puuconf ATTRIBUTE_UNUSED, struc
   qsysdep->ipid = -1;
   return fret;
 }
-
-/* Dial out on a pipe port, so to speak: launch connection program
-   under us.  The code alternates q->o between q->ord and q->owr as
-   appropriate.  It is always q->ord before any call to fsblock.  */
 
-/*ARGSUSED*/
-static boolean
-fspipe_dial (struct sconnection *qconn, pointer puuconf, const struct uuconf_system *qsys ATTRIBUTE_UNUSED, const char *zphone ATTRIBUTE_UNUSED, struct uuconf_dialer *qdialer, enum tdialerfound *ptdialer)
-{
-  struct ssysdep_conn *q;
-  int aidescs[3];
-  const char **pzprog;
-
-  q = (struct ssysdep_conn *) qconn->psysdep;
-
-  *ptdialer = DIALERFOUND_FALSE;
-
-  pzprog = (const char **) qconn->qport->uuconf_u.uuconf_spipe.uuconf_pzcmd;
-
-  if (pzprog == NULL)
-    {
-      ulog (LOG_ERROR, "No command for pipe connection");
-      return FALSE;
-    }
-
-  aidescs[0] = SPAWN_WRITE_PIPE;
-  aidescs[1] = SPAWN_READ_PIPE;
-  aidescs[2] = SPAWN_NULL;
-
-  /* Pass fkeepuid, fkeepenv and fshell as TRUE.  This puts the
-     responsibility of security on the connection program.  */
-  q->ipid = ixsspawn (pzprog, aidescs, TRUE, TRUE, (const char *) NULL,
-		      FALSE, TRUE, (const char *) NULL,
-		      (const char *) NULL, (const char *) NULL);
-  if (q->ipid < 0)
-    {
-      ulog (LOG_ERROR, "ixsspawn (%s): %s", pzprog[0], strerror (errno));
-      return FALSE;
-    }
-
-  q->owr = aidescs[0];
-  q->ord = aidescs[1];
-  q->o = q->ord;
-
-  q->iflags = fcntl (q->ord, F_GETFL, 0);
-  q->iwr_flags = fcntl (q->owr, F_GETFL, 0);
-  if (q->iflags < 0 || q->iwr_flags < 0)
-    {
-      ulog (LOG_ERROR, "fspipe_dial: fcntl: %s", strerror (errno));
-      (void) fspipe_close (qconn, puuconf, qdialer, FALSE);
-      return FALSE;
-    }
-
-  return TRUE;
-}
-
 #if 0
 
 /* Marc Boucher's contributed code used an alarm to avoid waiting too

@@ -85,12 +85,10 @@ _uuconf_iinit_global (struct sglobal **pqglobal)
   qprocess->fstrip_proto = TRUE;
   qprocess->cmaxuuxqts = 0;
   qprocess->zrunuuxqt = NULL;
-  qprocess->pzdialcodefiles = NULL;
   qprocess->pztimetables = NULL;
   qprocess->zconfigfile = NULL;
   qprocess->pzsysfiles = NULL;
   qprocess->pzportfiles = NULL;
-  qprocess->pzdialfiles = NULL;
   qprocess->pzpwdfiles = NULL;
   qprocess->pzcallfiles = NULL;
   qprocess->qunknown = NULL;

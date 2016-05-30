@@ -155,7 +155,7 @@ fconn_open (struct sconnection *qconn, long int ibaud, long int ihighbaud, boole
 /* Close a connection.  */
 
 boolean
-fconn_close (struct sconnection *qconn, pointer puuconf, struct uuconf_dialer *qdialer, boolean fsuccess)
+fconn_close (struct sconnection *qconn, pointer puuconf, struct dummy *dummy, boolean fsuccess)
 {
   boolean fret;
 
@@ -164,7 +164,7 @@ fconn_close (struct sconnection *qconn, pointer puuconf, struct uuconf_dialer *q
   /* Don't report hangup signals while we're closing.  */
   fLog_sighup = FALSE;
 
-  fret = (*qconn->qcmds->pfclose) (qconn, puuconf, qdialer, fsuccess);
+  fret = (*qconn->qcmds->pfclose) (qconn, puuconf, dummy, fsuccess);
 
   /* Ignore any SIGHUP we may have gotten, and make sure any signal
      reporting has been done before we reset fLog_sighup.  */
@@ -176,32 +176,8 @@ fconn_close (struct sconnection *qconn, pointer puuconf, struct uuconf_dialer *q
 
   return fret;
 }
-
-/* Dial out on the connection.  */
 
-boolean
-fconn_dial (struct sconnection *qconn, pointer puuconf, const struct uuconf_system *qsys, const char *zphone, struct uuconf_dialer *qdialer, enum tdialerfound *ptdialerfound)
-{
-  struct uuconf_dialer sdialer;
-  enum tdialerfound tfound;
-  boolean (*pfdial) P((struct sconnection *, pointer,
-		       const struct uuconf_system *, const char *,
-		       struct uuconf_dialer *, enum tdialerfound *));
 
-  if (qdialer == NULL)
-    qdialer = &sdialer;
-  if (ptdialerfound == NULL)
-    ptdialerfound = &tfound;
-      
-  qdialer->uuconf_zname = NULL;
-  *ptdialerfound = DIALERFOUND_FALSE;
-
-  pfdial = qconn->qcmds->pfdial;
-  if (pfdial == NULL)
-    return TRUE;
-  return (*pfdial) (qconn, puuconf, qsys, zphone, qdialer, ptdialerfound);
-}
-
 /* Read data from the connection.  */
 
 boolean

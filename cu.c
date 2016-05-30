@@ -159,9 +159,6 @@ static struct sconnection *qCuconn;
 /* Whether to close the connection.  */
 static boolean fCuclose_conn;
 
-/* Dialer used to dial out.  */
-static struct uuconf_dialer *qCudialer;
-
 /* Whether we need to restore the terminal.  */
 static boolean fCurestore_terminal;
 
@@ -266,8 +263,6 @@ main (int argc, char **argv)
   struct sconnection sconn;
   struct sconninfo sinfo;
   long ihighbaud;
-  struct uuconf_dialer sdialer;
-  struct uuconf_dialer *qdialer;
   char bcmd;
 
   zProgram = argv[0];
@@ -709,56 +704,8 @@ main (int argc, char **argv)
       if (qsys != NULL)
 	zphone = qsys->uuconf_zphone;
 
-      if (qsys != NULL || zphone != NULL)
-	{
-	  enum tdialerfound tdialer;
-
-	  if (! fconn_dial (&sconn, puuconf, qsys, zphone, &sdialer,
-			    &tdialer))
-	    {
-	      if (zport != NULL
-		  || zline != NULL
-		  || ibaud != 0L
-		  || qsys == NULL)
-		ucuabort ();
-
-	      qsys = qsys->uuconf_qalternate;
-	      if (qsys == NULL)
-		ulog (LOG_FATAL, "%s: No remaining alternates", zsystem);
-
-	      fCuclose_conn = FALSE;
-	      (void) fconn_close (&sconn, pCuuuconf, qCudialer, FALSE);
-	      qCuconn = NULL;
-	      (void) fconn_unlock (&sconn);
-	      uconn_free (&sconn);
-
-	      /* Loop around and try another alternate.  */
-	      flooped = TRUE;
-	      continue;
-	    }
-	  if (tdialer == DIALERFOUND_FALSE)
-	    qdialer = NULL;
-	  else
-	    qdialer = &sdialer;
-	}
-      else
-	{
-	  /* If no system or phone number was specified, we connect
-	     directly to the modem.  We only permit this if the user
-	     has access to the port, since it permits various
-	     shenanigans such as reprogramming the automatic
-	     callbacks.  */
-	  if (! fsysdep_port_access (sconn.qport))
-	    ulog (LOG_FATAL, "Access to port denied");
-	  qdialer = NULL;
-	  if (! fconn_carrier (&sconn, FALSE))
-	    ulog (LOG_FATAL, "Can't turn off carrier");
-	}
-
       break;
     }
-
-  qCudialer = qdialer;
 
   if (FGOT_SIGNAL ())
     ucuabort ();
@@ -791,7 +738,7 @@ main (int argc, char **argv)
   fCurestore_terminal = FALSE;
   (void) fsysdep_terminal_restore ();
 
-  (void) fconn_close (&sconn, puuconf, qdialer, TRUE);
+  (void) fconn_close (&sconn, puuconf, NULL, TRUE);
   (void) fconn_unlock (&sconn);
   uconn_free (&sconn);
 
@@ -872,7 +819,7 @@ ucuabort (void)
       if (fCuclose_conn)
 	{
 	  fCuclose_conn = FALSE;
-	  (void) fconn_close (qCuconn, pCuuuconf, qCudialer, FALSE);
+	  (void) fconn_close (qCuconn, pCuuuconf, NULL, FALSE);
 	}
       qconn = qCuconn;
       qCuconn = NULL;

@@ -35,10 +35,8 @@
 #define CONFIGFILE "/config"
 #define SYSFILE "/sys"
 #define PORTFILE "/port"
-#define DIALFILE "/dial"
 #define CALLFILE "/call"
 #define PASSWDFILE "/passwd"
-#define DIALCODEFILE "/dialcode"
 
 /* A macro to check whether fopen failed because the file did not
    exist.  */

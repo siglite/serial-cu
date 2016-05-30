@@ -13,7 +13,6 @@ const char *azStatus[] =
 {
   "SUCCESSFUL",
   "DEVICE FAILED",
-  "DIAL FAILED",
   "LOGIN FAILED",
   "STARTUP FAILED",
   "CONVERSATION FAILED",
@@ -27,7 +26,6 @@ const char *azStatus[] =
 {
   "Conversation complete",
   "Port unavailable",
-  "Dial failed",
   "Login failed",
   "Handshake failed",
   "Call failed",

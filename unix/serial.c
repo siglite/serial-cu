@@ -237,11 +237,11 @@ static boolean fsblock P((struct ssysdep_conn *q, boolean fblock));
 static boolean fsserial_close P((struct ssysdep_conn *q));
 static boolean fsstdin_close P((struct sconnection *qconn,
 				pointer puuconf,
-				struct uuconf_dialer *qdialer,
+				struct dummy *dummy,
 				boolean fsuccess));
 static boolean fsdirect_close P((struct sconnection *qconn,
 				 pointer puuconf,
-				 struct uuconf_dialer *qdialer,
+				 struct dummy *dummy,
 				 boolean fsuccess));
 static boolean fsserial_break P((struct sconnection *qconn));
 static boolean fsstdin_break P((struct sconnection *qconn));
@@ -1396,7 +1396,7 @@ fsserial_close (struct ssysdep_conn *q)
 
 /*ARGSUSED*/
 static boolean
-fsstdin_close (struct sconnection *qconn, pointer puuconf ATTRIBUTE_UNUSED, struct uuconf_dialer *qdialer ATTRIBUTE_UNUSED, boolean fsuccess ATTRIBUTE_UNUSED)
+fsstdin_close (struct sconnection *qconn, pointer puuconf ATTRIBUTE_UNUSED, struct dummy *dummy, boolean fsuccess ATTRIBUTE_UNUSED)
 {
   struct ssysdep_conn *qsysdep;
 
@@ -1411,7 +1411,7 @@ fsstdin_close (struct sconnection *qconn, pointer puuconf ATTRIBUTE_UNUSED, stru
 
 /*ARGSUSED*/
 static boolean
-fsdirect_close (struct sconnection *qconn, pointer puuconf ATTRIBUTE_UNUSED, struct uuconf_dialer *qdialer ATTRIBUTE_UNUSED, boolean fsuccess ATTRIBUTE_UNUSED)
+fsdirect_close (struct sconnection *qconn, pointer puuconf ATTRIBUTE_UNUSED, struct dummy *dummy, boolean fsuccess ATTRIBUTE_UNUSED)
 {
   return fsserial_close ((struct ssysdep_conn *) qconn->psysdep);
 }

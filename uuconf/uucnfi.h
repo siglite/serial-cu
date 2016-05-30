@@ -85,8 +85,6 @@ struct sprocess
   int cmaxuuxqts;
   /* How often to spawn a uuxqt process.  */
   const char *zrunuuxqt;
-  /* The names of the dialcode files.  */
-  char **pzdialcodefiles;
   /* Timetables.  These are in pairs.  The first element is the name,
      the second is the time string.  */
   char **pztimetables;
@@ -97,8 +95,6 @@ struct sprocess
   char **pzsysfiles;
   /* Taylor UUCP port file names.  */
   char **pzportfiles;
-  /* Taylor UUCP dial file names.  */
-  char **pzdialfiles;
   /* Taylor UUCP passwd file names.  */
   char **pzpwdfiles;
   /* Taylor UUCP call file names.  */
@@ -208,11 +204,6 @@ extern int _uuconf_iread_locations P((struct sglobal *qglobal));
 extern int _uuconf_iport_cmd P((struct sglobal *qglobal, int argc,
 				char **argv, struct uuconf_port *qport));
 
-/* Process a command for a dialer from a Taylor UUCP file.  */
-extern int _uuconf_idialer_cmd P((struct sglobal *qglobal, int argc,
-				  char **argv,
-				  struct uuconf_dialer *qdialer));
-
 /* Process a protocol-parameter command from a Taylor UUCP file.  */
 extern int _uuconf_iadd_proto_param P((struct sglobal *qglobal,
 				       int argc, char **argv,
@@ -247,9 +238,6 @@ extern int _uuconf_isystem_basic_default P((struct sglobal *qglobal,
 
 /* Clear port information.  */
 extern void _uuconf_uclear_port P((struct uuconf_port *qport));
-
-/* Clear dialer information.  */
-extern void _uuconf_uclear_dialer P((struct uuconf_dialer *qdialer));
 
 /* Add a timetable.  */
 extern int _uuconf_itimetable P((pointer pglobal, int argc, char **argv,

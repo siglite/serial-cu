@@ -77,10 +77,6 @@ static const struct cmdtab_offset asCmds[] =
       offsetof (struct sprocess, pzsysfiles), itaddfile },
   { "portfile", UUCONF_CMDTABTYPE_FN | 0,
       offsetof (struct sprocess, pzportfiles), itaddfile },
-  { "dialfile", UUCONF_CMDTABTYPE_FN | 0,
-      offsetof (struct sprocess, pzdialfiles), itaddfile },
-  { "dialcodefile", UUCONF_CMDTABTYPE_FN | 0,
-      offsetof (struct sprocess, pzdialcodefiles), itaddfile },
   { "callfile", UUCONF_CMDTABTYPE_FN | 0,
       offsetof (struct sprocess, pzcallfiles), itaddfile },
   { "passwdfile", UUCONF_CMDTABTYPE_FN | 0,
@@ -209,13 +205,6 @@ uuconf_taylor_init (ppglobal, zprogram, zname)
   if (iret != UUCONF_SUCCESS)
     return iret;
   iret = itset_default (qglobal, &qglobal->qprocess->pzportfiles, PORTFILE);
-  if (iret != UUCONF_SUCCESS)
-    return iret;
-  iret = itset_default (qglobal, &qglobal->qprocess->pzdialfiles, DIALFILE);
-  if (iret != UUCONF_SUCCESS)
-    return iret;
-  iret = itset_default (qglobal, &qglobal->qprocess->pzdialcodefiles,
-			DIALCODEFILE);
   if (iret != UUCONF_SUCCESS)
     return iret;
   iret = itset_default (qglobal, &qglobal->qprocess->pzpwdfiles, PASSWDFILE);

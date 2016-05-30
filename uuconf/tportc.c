@@ -34,8 +34,6 @@ static int ipproto_param P((pointer pglobal, int argc, char **argv,
 			    pointer pvar, pointer pinfo));
 static int ipbaud_range P((pointer pglobal, int argc, char **argv,
 			   pointer pvar, pointer pinfo));
-static int ipdialer P((pointer pglobal, int argc, char **argv, pointer pvar,
-		       pointer pinfo));
 static int ipcunknown P((pointer pglobal, int argc, char **argv,
 			 pointer pvar, pointer pinfo));
 
@@ -251,17 +249,6 @@ ipproto_param (pointer pglobal, int argc, char **argv, pointer pvar, pointer pin
 /*ARGSUSED*/
 static int
 ipbaud_range (pointer pglobal, int argc ATTRIBUTE_UNUSED, char **argv, pointer pvar, pointer pinfo ATTRIBUTE_UNUSED)
-{
-  /* FIXME: */
-  return 0;
-}
-
-/* Handle the "dialer" command.  If there is one argument, this names
-   a dialer.  Otherwise, the remaining arguments form a command
-   describing the dialer.  */
-
-static int
-ipdialer (pointer pglobal, int argc, char **argv, pointer pvar, pointer pinfo)
 {
   /* FIXME: */
   return 0;
