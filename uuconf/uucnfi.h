@@ -213,12 +213,6 @@ extern int _uuconf_idialer_cmd P((struct sglobal *qglobal, int argc,
 				  char **argv,
 				  struct uuconf_dialer *qdialer));
 
-/* Process a command for a chat script from a Taylor UUCP file; this
-   is also called for HDB or V2 files, with a made up command.  */
-extern int _uuconf_ichat_cmd P((struct sglobal *qglobal, int argc,
-				char **argv, struct uuconf_chat *qchat,
-				pointer pblock));
-
 /* Process a protocol-parameter command from a Taylor UUCP file.  */
 extern int _uuconf_iadd_proto_param P((struct sglobal *qglobal,
 				       int argc, char **argv,

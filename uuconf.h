@@ -70,34 +70,7 @@ typedef unsigned int UUCONF_SIZE_T;
    q -- a pointer to a structure (struct XX *)
    p -- a pointer to something other than a string
    */
-
-/* The information which is kept for a chat script.  */
 
-struct uuconf_chat
-{
-  /* The script itself.  This is a NULL terminated list of expect/send
-     pairs.  The first string is an expect string.  A string starting
-     with a '-' indicates subsend string; the following strings which
-     start with '-' are subexpect/subsend strings.  This field may be
-     NULL, in which case there is no chat script (but pzprogram may
-     hold a program to run).  */
-  char **uuconf_pzchat;
-  /* The chat program to run.  This is a NULL terminated list of
-     arguments; element 0 is the program.  May be NULL, in which case
-     there is no program.  */
-  char **uuconf_pzprogram;
-  /* The timeout in seconds to use for expect strings in the chat
-     script.  */
-  int uuconf_ctimeout;
-  /* The NULL terminated list of failure strings.  If any of these
-     strings appear, the chat script is aborted.  May be NULL, in
-     which case there are no failure strings.  */
-  char **uuconf_pzfail;
-  /* Non-zero if incoming characters should be stripped to seven bits
-     (by anding with 0x7f).  */
-  int uuconf_fstrip;
-};
-
 /* The information which is kept for a time specification.  This is a
    linked list of structures.  Each element of the list represents a
    span of time, giving a starting time and an ending time.  The time
@@ -249,8 +222,6 @@ struct uuconf_system
      May be NULL, in which case a dialer script may not use \D or \T
      for this system, and a TCP port will use the system name.  */
   char *uuconf_zphone;
-  /* Chat script to use when logging in to the system.  */
-  struct uuconf_chat uuconf_schat;
   /* Login name to use for \L in the login chat script.  This should
      normally be accessed via uuconf_callout.  If it is "*",
      uuconf_callout will look it up in the call out file.  This may be
@@ -280,8 +251,6 @@ struct uuconf_system
   /* Array of protocol parameters.  Ends in an entry with a
      uuconf_bproto field of '\0'.  May be NULL.  */
   struct uuconf_proto_param *uuconf_qproto_params;
-  /* Chat script to run when called by this system.  */
-  struct uuconf_chat uuconf_scalled_chat;
   /* Debugging level to set during a conversation.  May be NULL.  */
   char *uuconf_zdebug;
   /* Maximum remote debugging level this system may request.  May be
@@ -422,8 +391,6 @@ struct uuconf_dialer
 {
   /* The name of the dialer.  */
   char *uuconf_zname;
-  /* The chat script to use when dialing out.  */
-  struct uuconf_chat uuconf_schat;
   /* The string to send when a `=' appears in the phone number.  */
   char *uuconf_zdialtone;
   /* The string to send when a `-' appears in the phone number.  */
@@ -440,10 +407,6 @@ struct uuconf_dialer
   /* If non-zero, sleep for 1 second after toggling DTR.  Ignored if
      fdtr_toggle is zero.  */
   int uuconf_fdtr_toggle_wait;
-  /* The chat script to use when a call is complete.  */
-  struct uuconf_chat uuconf_scomplete;
-  /* The chat script to use when a call is aborted.  */
-  struct uuconf_chat uuconf_sabort;
   /* Array of protocol parameters.  Ends in an entry with a
      uuconf_bproto field of '\0'.  May be NULL.  */
   struct uuconf_proto_param *uuconf_qproto_params;

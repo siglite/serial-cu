@@ -52,7 +52,6 @@ CMDTABFN (iitimegrade);
 CMDTABFN (iisize);
 CMDTABFN (iibaud_range);
 CMDTABFN (iiport);
-CMDTABFN (iichat);
 CMDTABFN (iidebug);
 CMDTABFN (iicalled_login);
 CMDTABFN (iiproto_param);
@@ -120,8 +119,6 @@ static const struct cmdtab_offset asIcmds[] =
       offsetof (struct uuconf_system, uuconf_zphone), NULL },
   { "address", UUCONF_CMDTABTYPE_STRING,
       offsetof (struct uuconf_system, uuconf_zphone), NULL },
-  { "chat", UUCONF_CMDTABTYPE_PREFIX | 0,
-      offsetof (struct uuconf_system, uuconf_schat), iichat },
   { "call-login", UUCONF_CMDTABTYPE_STRING,
       offsetof (struct uuconf_system, uuconf_zcall_login), NULL },
   { "call-password", UUCONF_CMDTABTYPE_STRING,
@@ -136,8 +133,6 @@ static const struct cmdtab_offset asIcmds[] =
       offsetof (struct uuconf_system, uuconf_zprotocols), NULL },
   { "protocol-parameter", UUCONF_CMDTABTYPE_FN | 0,
       offsetof (struct uuconf_system, uuconf_qproto_params), iiproto_param },
-  { "called-chat", UUCONF_CMDTABTYPE_PREFIX | 0,
-      offsetof (struct uuconf_system, uuconf_scalled_chat), iichat },
   { "debug", UUCONF_CMDTABTYPE_FN | 0,
       offsetof (struct uuconf_system, uuconf_zdebug), iidebug },
   { "max-remote-debug", UUCONF_CMDTABTYPE_STRING,
@@ -332,9 +327,7 @@ uiset_call (struct uuconf_system *qsys)
      || qsys->uuconf_zport != UUCONF_UNSET
      || qsys->uuconf_qport != UUCONF_UNSET
      || qsys->uuconf_ibaud >= 0
-     || qsys->uuconf_zphone != UUCONF_UNSET
-     || qsys->uuconf_schat.uuconf_pzchat != UUCONF_UNSET
-     || qsys->uuconf_schat.uuconf_pzprogram != UUCONF_UNSET);
+     || qsys->uuconf_zphone != UUCONF_UNSET);
 
   qsys->uuconf_fcalled =
     qsys->uuconf_zcalled_login != UUCONF_UNSET;
@@ -647,25 +640,7 @@ iiport (pointer pglobal, int argc, char **argv, pointer pvar ATTRIBUTE_UNUSED, p
       return iret;
     }
 }
-
-/* Handle the "chat" and "called-chat" set of commands.  These just
-   hand off to the generic chat script function.  */
 
-static int
-iichat (pointer pglobal, int argc, char **argv, pointer pvar, pointer pinfo)
-{
-  struct sglobal *qglobal = (struct sglobal *) pglobal;
-  struct sinfo *qinfo = (struct sinfo *) pinfo;
-  struct uuconf_chat *qchat = (struct uuconf_chat *) pvar;
-  int iret;
-
-  iret = _uuconf_ichat_cmd (qglobal, argc, argv, qchat,
-			    qinfo->qsys->uuconf_palloc);
-  if (UUCONF_ERROR_VALUE (iret) != UUCONF_SUCCESS)
-    iret |= UUCONF_CMDTABRET_EXIT;
-  return iret;
-}
-
 /* Local interface to the _uuconf_idebug_cmd function, which handles
    the "debug" command.  */
 

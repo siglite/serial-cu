@@ -63,12 +63,6 @@ const char _uuconf_syssub_rcsid[] = "$Id$";
       OP (uuconf_pzcmds); \
       OP (uuconf_pzforward_from); \
       OP (uuconf_pzforward_to); \
-      OP (uuconf_schat.uuconf_pzchat); \
-      OP (uuconf_schat.uuconf_pzprogram); \
-      OP (uuconf_schat.uuconf_pzfail); \
-      OP (uuconf_scalled_chat.uuconf_pzchat); \
-      OP (uuconf_scalled_chat.uuconf_pzprogram); \
-      OP (uuconf_scalled_chat.uuconf_pzfail); \
     } \
   while (0)
 
@@ -100,8 +94,6 @@ const char _uuconf_syssub_rcsid[] = "$Id$";
       OP (uuconf_frec_request); \
       OP (uuconf_fcall_transfer); \
       OP (uuconf_fcalled_transfer); \
-      OP (uuconf_schat.uuconf_fstrip); \
-      OP (uuconf_scalled_chat.uuconf_fstrip); \
     } \
   while (0)
 
@@ -115,8 +107,6 @@ const char _uuconf_syssub_rcsid[] = "$Id$";
       OP (uuconf_ibaud); \
       OP (uuconf_ihighbaud); \
       OP (uuconf_cfree_space); \
-      OP (uuconf_schat.uuconf_ctimeout); \
-      OP (uuconf_scalled_chat.uuconf_ctimeout); \
       OP (uuconf_cmax_file_time); \
     } \
   while (0)
@@ -315,78 +305,6 @@ _uuconf_isystem_basic_default (struct sglobal *qglobal, register struct uuconf_s
       /* The default of 26 allowable retries is traditional.  */
       if (q->uuconf_cmax_retries < 0)
 	q->uuconf_cmax_retries = 26;
-      if (q->uuconf_schat.uuconf_pzchat == UUCONF_UNSET)
-	{
-	  q->uuconf_schat.uuconf_pzchat = NULL;
-	  iret = _uuconf_iadd_string (qglobal, (char *) "\"\"", FALSE,
-				      FALSE,
-				      &q->uuconf_schat.uuconf_pzchat,
-				      q->uuconf_palloc);
-	  if (iret != UUCONF_SUCCESS)
-	    return iret;
-	  iret = _uuconf_iadd_string (qglobal, (char *) "\\r\\c", FALSE,
-				      FALSE,
-				      &q->uuconf_schat.uuconf_pzchat,
-				      q->uuconf_palloc);
-	  if (iret != UUCONF_SUCCESS)
-	    return iret;
-	  iret = _uuconf_iadd_string (qglobal, (char *) "ogin:", FALSE,
-				      FALSE,
-				      &q->uuconf_schat.uuconf_pzchat,
-				      q->uuconf_palloc);
-	  if (iret != UUCONF_SUCCESS)
-	    return iret;
-	  iret = _uuconf_iadd_string (qglobal, (char *) "-BREAK", FALSE,
-				      FALSE,
-				      &q->uuconf_schat.uuconf_pzchat,
-				      q->uuconf_palloc);
-	  if (iret != UUCONF_SUCCESS)
-	    return iret;
-	  iret = _uuconf_iadd_string (qglobal, (char *) "-ogin:", FALSE,
-				      FALSE,
-				      &q->uuconf_schat.uuconf_pzchat,
-				      q->uuconf_palloc);
-	  if (iret != UUCONF_SUCCESS)
-	    return iret;
-	  iret = _uuconf_iadd_string (qglobal, (char *) "-BREAK", FALSE,
-				      FALSE,
-				      &q->uuconf_schat.uuconf_pzchat,
-				      q->uuconf_palloc);
-	  if (iret != UUCONF_SUCCESS)
-	    return iret;
-	  iret = _uuconf_iadd_string (qglobal, (char *) "-ogin:", FALSE,
-				      FALSE,
-				      &q->uuconf_schat.uuconf_pzchat,
-				      q->uuconf_palloc);
-	  if (iret != UUCONF_SUCCESS)
-	    return iret;
-	  iret = _uuconf_iadd_string (qglobal, (char *) "\\L", FALSE,
-				      FALSE,
-				      &q->uuconf_schat.uuconf_pzchat,
-				      q->uuconf_palloc);
-	  if (iret != UUCONF_SUCCESS)
-	    return iret;
-	  iret = _uuconf_iadd_string (qglobal, (char *) "word:", FALSE,
-				      FALSE,
-				      &q->uuconf_schat.uuconf_pzchat,
-				      q->uuconf_palloc);
-	  if (iret != UUCONF_SUCCESS)
-	    return iret;
-	  iret = _uuconf_iadd_string (qglobal, (char *) "\\P", FALSE,
-				      FALSE,
-				      &q->uuconf_schat.uuconf_pzchat,
-				      q->uuconf_palloc);
-	  if (iret != UUCONF_SUCCESS)
-	    return iret;
-	}
-      if (q->uuconf_schat.uuconf_ctimeout < 0)
-	q->uuconf_schat.uuconf_ctimeout = 10;
-      if (q->uuconf_schat.uuconf_fstrip < 0)
-	q->uuconf_schat.uuconf_fstrip = TRUE;
-      if (q->uuconf_scalled_chat.uuconf_ctimeout < 0)
-	q->uuconf_scalled_chat.uuconf_ctimeout = 60;
-      if (q->uuconf_scalled_chat.uuconf_fstrip < 0)
-	q->uuconf_scalled_chat.uuconf_fstrip = TRUE;
       if (q->uuconf_fsend_request < 0)
 	q->uuconf_fsend_request = TRUE;
       if (q->uuconf_frec_request < 0)

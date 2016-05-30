@@ -13,7 +13,7 @@ LDADD = unix/libunix.a uuconf/libuuconf.a lib/libuucp.a
 
 UUHEADERS = uucp.h uudefs.h uuconf.h policy.h system.h sysdep.h getopt.h
 
-cu_SOURCES = cu.h cu.c prot.c log.c chat.c conn.c copy.c $(UUHEADERS)
+cu_SOURCES = cu.h cu.c prot.c log.c conn.c copy.c $(UUHEADERS)
 
 EXTRA_DIST = cu.1
 

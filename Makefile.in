@@ -108,7 +108,7 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(infodir)" \
 PROGRAMS = $(bin_PROGRAMS)
 am__objects_1 =
 am_cu_OBJECTS = cu.$(OBJEXT) prot.$(OBJEXT) log.$(OBJEXT) \
-	chat.$(OBJEXT) conn.$(OBJEXT) copy.$(OBJEXT) $(am__objects_1)
+	conn.$(OBJEXT) copy.$(OBJEXT) $(am__objects_1)
 cu_OBJECTS = $(am_cu_OBJECTS)
 cu_LDADD = $(LDADD)
 cu_DEPENDENCIES = unix/libunix.a uuconf/libuuconf.a lib/libuucp.a
@@ -404,7 +404,7 @@ man_MANS = cu.1
 AM_CFLAGS = $(WARN_CFLAGS)
 LDADD = unix/libunix.a uuconf/libuuconf.a lib/libuucp.a
 UUHEADERS = uucp.h uudefs.h uuconf.h policy.h system.h sysdep.h getopt.h
-cu_SOURCES = cu.h cu.c prot.c log.c chat.c conn.c copy.c $(UUHEADERS)
+cu_SOURCES = cu.h cu.c prot.c log.c conn.c copy.c $(UUHEADERS)
 EXTRA_DIST = cu.1
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -512,7 +512,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/conn.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/copy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cu.Po@am__quote@

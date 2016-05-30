@@ -76,7 +76,6 @@ static const struct sconncmds spipecmds =
   NULL, /* pfbreak */
   NULL, /* pfset */
   NULL, /* pfcarrier */
-  fsdouble_chat,
   NULL  /* pibaud */
 };
 

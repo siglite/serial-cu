@@ -31,7 +31,6 @@
    header file.  */
 struct uuconf_system;
 struct uuconf_dialer;
-struct uuconf_chat;
 #endif
 
 /* This structure represents a connection.  */
@@ -160,8 +159,6 @@ struct sconncmds
   /* Require or ignore carrer.  This field may be NULL.  */
   boolean (*pfcarrier) P((struct sconnection *qconn,
 			  boolean fcarrier));
-  /* Run a chat program on a connection.  */
-  boolean (*pfchat) P((struct sconnection *qconn, char **pzprog));
   /* Get the baud rate of a connection.  This field may be NULL.  */
   long (*pibaud) P((struct sconnection *qconn));
 };
@@ -261,33 +258,12 @@ extern boolean fconn_set P((struct sconnection *qconn,
 /* Get the baud rate of a connection.  */
 extern long iconn_baud P((struct sconnection *qconn));
 
-/* Do a chat script with a system.  */
-extern boolean fchat P((struct sconnection *qconn, pointer puuconf,
-			const struct uuconf_chat *qchat,
-			const struct uuconf_system *qsys,
-			const struct uuconf_dialer *qdialer,
-			const char *zphone, boolean ftranslate,
-			const char *zport, long ibaud));
-
 /* Tell the connection to either require or ignore carrier as fcarrier
    is TRUE or FALSE respectively.  This is called with fcarrier TRUE
    when \m is encountered in a chat script, and with fcarrier FALSE
    when \M is encountered.  */
 extern boolean fconn_carrier P((struct sconnection *qconn,
 				boolean fcarrier));
-
-/* Run a chat program on a connection.  */
-extern boolean fconn_run_chat P((struct sconnection *qconn,
-				 char **pzprog));
-
-/* Run through a dialer sequence.  This is a support routine for the
-   port type specific dialing routines.  */
-extern boolean fconn_dial_sequence P((struct sconnection *qconn,
-				      pointer puuconf, char **pzdialer,
-				      const struct uuconf_system *qsys,
-				      const char *zphone,
-				      struct uuconf_dialer *qdialer,
-				      enum tdialerfound *ptdialerfound));
 
 /* System dependent initialization routines.  */
 extern boolean fsysdep_stdin_init P((struct sconnection *qconn));

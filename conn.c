@@ -322,14 +322,6 @@ fconn_carrier (struct sconnection *qconn, boolean fcarrier)
   return (*pfcarrier) (qconn, fcarrier);
 }
 
-/* Run a chat program on a connection.  */
-
-boolean
-fconn_run_chat (struct sconnection *qconn, char **pzprog)
-{
-  return (*qconn->qcmds->pfchat) (qconn, pzprog);
-}
-
 /* Get the baud rate of a connection.  */
 
 long
@@ -342,108 +334,4 @@ iconn_baud (struct sconnection *qconn)
     return 0;
   return (*pibaud) (qconn);
 }
-
-/* Run through a dialer sequence.  The pzdialer argument is a list of
-   strings, which are considered in dialer/token pairs.  The dialer
-   string names a dialer to use.  The token string is what \D and \T
-   in the chat script expand to.  If there is no token for the last
-   dialer, the zphone argument is used.  The qdialer argument is
-   filled in with information for the first dialer, and *ptdialerfound
-   is set to whether the information should be freed or not.  However,
-   if *ptdialerfound is not DIALERFOUND_FALSE when this function is
-   called, then the information for the first dialer is already in
-   qdialer.  */
 
-boolean
-fconn_dial_sequence (qconn, puuconf, pzdialer, qsys, zphone, qdialer,
-		     ptdialerfound)
-     struct sconnection *qconn;
-     pointer puuconf;
-     char **pzdialer;
-     const struct uuconf_system *qsys;
-     const char *zphone;
-     struct uuconf_dialer *qdialer;
-     enum tdialerfound *ptdialerfound;
-{
-  const char *zname;
-  boolean ffirst, ffreefirst;
-
-  if (qconn->qport == NULL)
-    zname = NULL;
-  else
-    zname = qconn->qport->uuconf_zname;
-  ffirst = TRUE;
-  ffreefirst = FALSE;
-  while (*pzdialer != NULL)
-    {
-      struct uuconf_dialer *q;
-      struct uuconf_dialer s;
-      const char *ztoken;
-      boolean ftranslate;
-
-      if (! ffirst)
-	q = &s;
-      else
-	q = qdialer;
-
-      if (! ffirst || *ptdialerfound == DIALERFOUND_FALSE)
-	{
-	  int iuuconf;
-
-	  iuuconf = uuconf_dialer_info (puuconf, *pzdialer, q);
-	  if (iuuconf == UUCONF_NOT_FOUND)
-	    {
-	      ulog (LOG_ERROR, "%s: Dialer not found", *pzdialer);
-	      if (ffreefirst)
-		(void) uuconf_dialer_free (puuconf, qdialer);
-	      return FALSE;
-	    }
-	  else if (iuuconf != UUCONF_SUCCESS)
-	    {
-	      ulog_uuconf (LOG_ERROR, puuconf, iuuconf);
-	      if (ffreefirst)
-		(void) uuconf_dialer_free (puuconf, qdialer);
-	      return FALSE;
-	    }
-
-	  if (ffirst)
-	    {
-	      *ptdialerfound = DIALERFOUND_FREE;
-	      ffreefirst = TRUE;
-	    }
-	}
-
-      ++pzdialer;
-      ztoken = *pzdialer;
-
-      ftranslate = FALSE;
-      if (ztoken == NULL
-	  || strcmp (ztoken, "\\D") == 0)
-	ztoken = zphone;
-      else if (strcmp (ztoken, "\\T") == 0)
-	{
-	  ztoken = zphone;
-	  ftranslate = TRUE;
-	}
-
-      if (! fchat (qconn, puuconf, &q->uuconf_schat, qsys, q, ztoken,
-		   ftranslate, zname, iconn_baud (qconn)))
-	{
-	  if (q == &s)
-	    (void) uuconf_dialer_free (puuconf, q);
-	  if (ffreefirst)
-	    (void) uuconf_dialer_free (puuconf, qdialer);
-	  return FALSE;
-	}
-
-      if (ffirst)
-	ffirst = FALSE;
-      else
-	(void) uuconf_dialer_free (puuconf, q);
-
-      if (*pzdialer != NULL)
-	++pzdialer;
-    }
-
-  return TRUE;
-}

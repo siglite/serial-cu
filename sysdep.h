@@ -398,9 +398,7 @@ extern boolean fsysdep_conn_write P((struct sconnection *qconn,
 extern boolean fsysdep_conn_io P((struct sconnection *qconn,
 				  const char *zwrite, size_t *pcwrite,
 				  char *zread, size_t *pcread));
-extern boolean fsysdep_conn_chat P((struct sconnection *qconn,
-				    char **pzprog));
-
+
 /* Set a signal handler.  */
 extern void usset_signal P((int isig, RETSIGTYPE (*pfn) P((int)),
 			    boolean fforce, boolean *pfignored));
@@ -447,10 +445,6 @@ extern boolean fsdouble_read P((struct sconnection *qconn, char *zbuf,
 /* Write to a connection using two file descriptors.  */
 extern boolean fsdouble_write P((struct sconnection *qconn,
 				 const char *zbuf, size_t clen));
-
-/* Run a chat program on a connection using two file descriptors.  */
-extern boolean fsdouble_chat P((struct sconnection *qconn,
-				char **pzprog));
 
 /* Find a spool file in the spool directory.  For a local file, the
    bgrade argument is the grade of the file.  This is needed for

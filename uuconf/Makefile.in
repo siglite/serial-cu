@@ -108,28 +108,27 @@ libuuconf_a_AR = $(AR) $(ARFLAGS)
 libuuconf_a_LIBADD =
 am_libuuconf_a_OBJECTS = addblk.$(OBJEXT) addstr.$(OBJEXT) \
 	allblk.$(OBJEXT) alloc.$(OBJEXT) base.$(OBJEXT) bool.$(OBJEXT) \
-	callin.$(OBJEXT) calout.$(OBJEXT) chatc.$(OBJEXT) \
-	cmdarg.$(OBJEXT) cmdfil.$(OBJEXT) cmdlin.$(OBJEXT) \
-	cnfnms.$(OBJEXT) debfil.$(OBJEXT) deblev.$(OBJEXT) \
-	diacod.$(OBJEXT) dial.$(OBJEXT) diasub.$(OBJEXT) \
-	dnams.$(OBJEXT) errno.$(OBJEXT) errstr.$(OBJEXT) \
-	filnam.$(OBJEXT) freblk.$(OBJEXT) fredia.$(OBJEXT) \
-	free.$(OBJEXT) freprt.$(OBJEXT) fresys.$(OBJEXT) \
-	grdcmp.$(OBJEXT) iniglb.$(OBJEXT) init.$(OBJEXT) int.$(OBJEXT) \
-	lckdir.$(OBJEXT) lineno.$(OBJEXT) llocnm.$(OBJEXT) \
-	local.$(OBJEXT) locnm.$(OBJEXT) logfil.$(OBJEXT) \
-	maxuxq.$(OBJEXT) mrgblk.$(OBJEXT) paramc.$(OBJEXT) \
-	port.$(OBJEXT) prtsub.$(OBJEXT) pubdir.$(OBJEXT) \
-	rdlocs.$(OBJEXT) reliab.$(OBJEXT) remunk.$(OBJEXT) \
-	runuxq.$(OBJEXT) sinfo.$(OBJEXT) snams.$(OBJEXT) \
-	split.$(OBJEXT) spool.$(OBJEXT) stafil.$(OBJEXT) \
-	strip.$(OBJEXT) syssub.$(OBJEXT) tcalou.$(OBJEXT) \
-	tdial.$(OBJEXT) tdialc.$(OBJEXT) tdnams.$(OBJEXT) \
-	tgcmp.$(OBJEXT) thread.$(OBJEXT) time.$(OBJEXT) \
-	tinit.$(OBJEXT) tlocnm.$(OBJEXT) tport.$(OBJEXT) \
-	tportc.$(OBJEXT) tsinfo.$(OBJEXT) tsnams.$(OBJEXT) \
-	tsys.$(OBJEXT) tval.$(OBJEXT) ugtlin.$(OBJEXT) unk.$(OBJEXT) \
-	val.$(OBJEXT)
+	callin.$(OBJEXT) calout.$(OBJEXT) cmdarg.$(OBJEXT) \
+	cmdfil.$(OBJEXT) cmdlin.$(OBJEXT) cnfnms.$(OBJEXT) \
+	debfil.$(OBJEXT) deblev.$(OBJEXT) diacod.$(OBJEXT) \
+	dial.$(OBJEXT) diasub.$(OBJEXT) dnams.$(OBJEXT) \
+	errno.$(OBJEXT) errstr.$(OBJEXT) filnam.$(OBJEXT) \
+	freblk.$(OBJEXT) fredia.$(OBJEXT) free.$(OBJEXT) \
+	freprt.$(OBJEXT) fresys.$(OBJEXT) grdcmp.$(OBJEXT) \
+	iniglb.$(OBJEXT) init.$(OBJEXT) int.$(OBJEXT) lckdir.$(OBJEXT) \
+	lineno.$(OBJEXT) llocnm.$(OBJEXT) local.$(OBJEXT) \
+	locnm.$(OBJEXT) logfil.$(OBJEXT) maxuxq.$(OBJEXT) \
+	mrgblk.$(OBJEXT) paramc.$(OBJEXT) port.$(OBJEXT) \
+	prtsub.$(OBJEXT) pubdir.$(OBJEXT) rdlocs.$(OBJEXT) \
+	reliab.$(OBJEXT) remunk.$(OBJEXT) runuxq.$(OBJEXT) \
+	sinfo.$(OBJEXT) snams.$(OBJEXT) split.$(OBJEXT) \
+	spool.$(OBJEXT) stafil.$(OBJEXT) strip.$(OBJEXT) \
+	syssub.$(OBJEXT) tcalou.$(OBJEXT) tdial.$(OBJEXT) \
+	tdialc.$(OBJEXT) tdnams.$(OBJEXT) tgcmp.$(OBJEXT) \
+	thread.$(OBJEXT) time.$(OBJEXT) tinit.$(OBJEXT) \
+	tlocnm.$(OBJEXT) tport.$(OBJEXT) tportc.$(OBJEXT) \
+	tsinfo.$(OBJEXT) tsnams.$(OBJEXT) tsys.$(OBJEXT) \
+	tval.$(OBJEXT) ugtlin.$(OBJEXT) unk.$(OBJEXT) val.$(OBJEXT)
 libuuconf_a_OBJECTS = $(am_libuuconf_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -288,7 +287,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 noinst_LIBRARIES = libuuconf.a
 libuuconf_a_SOURCES = addblk.c addstr.c allblk.c alloc.c base.c bool.c \
-	callin.c calout.c chatc.c cmdarg.c cmdfil.c cmdlin.c cnfnms.c \
+	callin.c calout.c cmdarg.c cmdfil.c cmdlin.c cnfnms.c \
 	debfil.c deblev.c diacod.c dial.c diasub.c dnams.c errno.c errstr.c \
 	filnam.c freblk.c fredia.c free.c freprt.c fresys.c grdcmp.c \
 	iniglb.c init.c int.c lckdir.c lineno.c llocnm.c \
@@ -356,7 +355,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bool.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/callin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/calout.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chatc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cmdarg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cmdfil.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cmdlin.Po@am__quote@
