@@ -115,26 +115,21 @@ am_libuuconf_a_OBJECTS = addblk.$(OBJEXT) addstr.$(OBJEXT) \
 	dnams.$(OBJEXT) errno.$(OBJEXT) errstr.$(OBJEXT) \
 	filnam.$(OBJEXT) freblk.$(OBJEXT) fredia.$(OBJEXT) \
 	free.$(OBJEXT) freprt.$(OBJEXT) fresys.$(OBJEXT) \
-	grdcmp.$(OBJEXT) hdial.$(OBJEXT) hdnams.$(OBJEXT) \
-	hinit.$(OBJEXT) hlocnm.$(OBJEXT) hport.$(OBJEXT) \
-	hrmunk.$(OBJEXT) hsinfo.$(OBJEXT) hsnams.$(OBJEXT) \
-	hsys.$(OBJEXT) hunk.$(OBJEXT) iniglb.$(OBJEXT) init.$(OBJEXT) \
-	int.$(OBJEXT) lckdir.$(OBJEXT) lineno.$(OBJEXT) \
-	llocnm.$(OBJEXT) local.$(OBJEXT) locnm.$(OBJEXT) \
-	logfil.$(OBJEXT) maxuxq.$(OBJEXT) mrgblk.$(OBJEXT) \
-	paramc.$(OBJEXT) port.$(OBJEXT) prtsub.$(OBJEXT) \
-	pubdir.$(OBJEXT) rdlocs.$(OBJEXT) rdperm.$(OBJEXT) \
-	reliab.$(OBJEXT) remunk.$(OBJEXT) runuxq.$(OBJEXT) \
-	sinfo.$(OBJEXT) snams.$(OBJEXT) split.$(OBJEXT) \
-	spool.$(OBJEXT) stafil.$(OBJEXT) strip.$(OBJEXT) \
-	syssub.$(OBJEXT) tcalou.$(OBJEXT) tdial.$(OBJEXT) \
-	tdialc.$(OBJEXT) tdnams.$(OBJEXT) tgcmp.$(OBJEXT) \
-	thread.$(OBJEXT) time.$(OBJEXT) tinit.$(OBJEXT) \
-	tlocnm.$(OBJEXT) tport.$(OBJEXT) tportc.$(OBJEXT) \
-	tsinfo.$(OBJEXT) tsnams.$(OBJEXT) tsys.$(OBJEXT) \
-	tval.$(OBJEXT) ugtlin.$(OBJEXT) unk.$(OBJEXT) val.$(OBJEXT) \
-	vinit.$(OBJEXT) vport.$(OBJEXT) vsinfo.$(OBJEXT) \
-	vsnams.$(OBJEXT) vsys.$(OBJEXT)
+	grdcmp.$(OBJEXT) iniglb.$(OBJEXT) init.$(OBJEXT) int.$(OBJEXT) \
+	lckdir.$(OBJEXT) lineno.$(OBJEXT) llocnm.$(OBJEXT) \
+	local.$(OBJEXT) locnm.$(OBJEXT) logfil.$(OBJEXT) \
+	maxuxq.$(OBJEXT) mrgblk.$(OBJEXT) paramc.$(OBJEXT) \
+	port.$(OBJEXT) prtsub.$(OBJEXT) pubdir.$(OBJEXT) \
+	rdlocs.$(OBJEXT) reliab.$(OBJEXT) remunk.$(OBJEXT) \
+	runuxq.$(OBJEXT) sinfo.$(OBJEXT) snams.$(OBJEXT) \
+	split.$(OBJEXT) spool.$(OBJEXT) stafil.$(OBJEXT) \
+	strip.$(OBJEXT) syssub.$(OBJEXT) tcalou.$(OBJEXT) \
+	tdial.$(OBJEXT) tdialc.$(OBJEXT) tdnams.$(OBJEXT) \
+	tgcmp.$(OBJEXT) thread.$(OBJEXT) time.$(OBJEXT) \
+	tinit.$(OBJEXT) tlocnm.$(OBJEXT) tport.$(OBJEXT) \
+	tportc.$(OBJEXT) tsinfo.$(OBJEXT) tsnams.$(OBJEXT) \
+	tsys.$(OBJEXT) tval.$(OBJEXT) ugtlin.$(OBJEXT) unk.$(OBJEXT) \
+	val.$(OBJEXT)
 libuuconf_a_OBJECTS = $(am_libuuconf_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -295,16 +290,14 @@ noinst_LIBRARIES = libuuconf.a
 libuuconf_a_SOURCES = addblk.c addstr.c allblk.c alloc.c base.c bool.c \
 	callin.c calout.c chatc.c cmdarg.c cmdfil.c cmdlin.c cnfnms.c \
 	debfil.c deblev.c diacod.c dial.c diasub.c dnams.c errno.c errstr.c \
-	filnam.c freblk.c fredia.c free.c freprt.c fresys.c grdcmp.c hdial.c \
-	hdnams.c hinit.c hlocnm.c hport.c hrmunk.c hsinfo.c hsnams.c \
-	hsys.c hunk.c iniglb.c init.c int.c lckdir.c lineno.c llocnm.c \
+	filnam.c freblk.c fredia.c free.c freprt.c fresys.c grdcmp.c \
+	iniglb.c init.c int.c lckdir.c lineno.c llocnm.c \
 	local.c locnm.c logfil.c maxuxq.c mrgblk.c paramc.c port.c \
-	prtsub.c pubdir.c rdlocs.c rdperm.c reliab.c remunk.c runuxq.c \
+	prtsub.c pubdir.c rdlocs.c reliab.c remunk.c runuxq.c \
 	sinfo.c snams.c split.c spool.c stafil.c strip.c syssub.c \
 	tcalou.c tdial.c tdialc.c tdnams.c tgcmp.c thread.c time.c \
 	tinit.c tlocnm.c tport.c tportc.c tsinfo.c tsnams.c tsys.c \
-	tval.c ugtlin.c unk.c val.c vinit.c vport.c vsinfo.c vsnams.c \
-	vsys.c alloc.h syshdr.h uucnfi.h
+	tval.c ugtlin.c unk.c val.c alloc.h syshdr.h uucnfi.h
 
 AM_CFLAGS = -I.. -I$(srcdir)/.. $(WARN_CFLAGS) -DNEWCONFIGLIB=\"$(NEWCONFIGDIR)\" -DOLDCONFIGLIB=\"$(OLDCONFIGDIR)\"
 all: all-am
@@ -383,16 +376,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freprt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fresys.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grdcmp.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdial.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdnams.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hinit.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hlocnm.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hport.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hrmunk.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hsinfo.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hsnams.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hsys.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hunk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iniglb.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/init.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/int.Po@am__quote@
@@ -409,7 +392,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/prtsub.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pubdir.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rdlocs.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rdperm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/reliab.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/remunk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/runuxq.Po@am__quote@
@@ -438,11 +420,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ugtlin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/unk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/val.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vinit.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vport.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vsinfo.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vsnams.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vsys.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

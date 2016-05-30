@@ -85,10 +85,6 @@ struct sprocess
   int cmaxuuxqts;
   /* How often to spawn a uuxqt process.  */
   const char *zrunuuxqt;
-  /* Whether we are reading the V2 configuration files.  */
-  boolean fv2;
-  /* Whether we are reading the HDB configuration files.  */
-  boolean fhdb;
   /* The names of the dialcode files.  */
   char **pzdialcodefiles;
   /* Timetables.  These are in pairs.  The first element is the name,
@@ -118,28 +114,8 @@ struct sprocess
   struct svalidate *qvalidate;
   /* Whether the "myname" command is used in a Taylor UUCP file.  */
   boolean fuses_myname;
-
-  /* V2 system file name (L.sys).  */
-  char *zv2systems;
-  /* V2 device file name (L-devices).  */
-  char *zv2devices;
-  /* V2 user permissions file name (USERFILE).  */
-  char *zv2userfile;
-  /* V2 user permitted commands file (L.cmds).  */
-  char *zv2cmds;
-
-  /* HDB system file names (Systems).  */
-  char **pzhdb_systems;
-  /* HDB device file names (Devices).  */
-  char **pzhdb_devices;
-  /* HDB dialer file names (Dialers).  */
-  char **pzhdb_dialers;
-  /* Whether the HDB Permissions file has been read.  */
-  boolean fhdb_read_permissions;
-  /* The HDB Permissions file entries.  */
-  struct shpermissions *qhdb_permissions;
 };
-
+
 /* This structure is used to hold the "unknown" commands from the
    Taylor UUCP config file before they have been parsed.  */
 
@@ -194,40 +170,7 @@ struct svalidate
   /* NULL terminated list of machine names.  */
   char **pzmachines;
 };
-
-/* This structure is used to hold a linked list of HDB Permissions
-   file entries.  */
 
-struct shpermissions
-{
-  /* Next entry in linked list.  */
-  struct shpermissions *qnext;
-  /* NULL terminated array of LOGNAME values.   */
-  char **pzlogname;
-  /* NULL terminated array of MACHINE values.  */
-  char **pzmachine;
-  /* Boolean REQUEST value.  */
-  int frequest;
-  /* Boolean SENDFILES value ("call" is taken as "no").  */
-  int fsendfiles;
-  /* NULL terminated array of READ values.  */
-  char **pzread;
-  /* NULL terminated array of WRITE values.  */
-  char **pzwrite;
-  /* Boolean CALLBACK value.  */
-  int fcallback;
-  /* NULL terminated array of COMMANDS values.  */
-  char **pzcommands;
-  /* NULL terminated array of VALIDATE values.  */
-  char **pzvalidate;
-  /* String MYNAME value.  */
-  char *zmyname;
-  /* String PUBDIR value.  */
-  const char *zpubdir;
-  /* NULL terminated array of ALIAS values.  */
-  char **pzalias;
-};
-
 /* This structure is used to build reentrant uuconf_cmdtab tables.
    The ioff field is either (size_t) -1 or an offsetof macro.  The
    table is then copied into a uuconf_cmdtab, except that offsets of
@@ -241,7 +184,7 @@ struct cmdtab_offset
   size_t ioff;
   uuconf_cmdtabfn pifn;
 };
-
+
 /* A value in a uuconf_system structure which holds the address of
    this special variable is known to be uninitialized.  Note that
    this address is used to set various access types, and must
@@ -291,21 +234,6 @@ extern int _uuconf_ireliable P((pointer pglobal, int argc, char **argv,
 				pointer pvar, pointer pinfo));
 extern int _uuconf_ihalf_duplex P((pointer pglobal, int argc, char **argv,
 				   pointer pvar, pointer pinfo));
-
-/* Internal function to read a system from the V2 configuration files.
-   This does not apply the basic defaults.  */
-extern int _uuconf_iv2_system_internal P((struct sglobal *qglobal,
-					  const char *zsystem,
-					  struct uuconf_system *qsys));
-
-/* Internal function to read a system from the HDB configuration
-   files.  This does not apply the basic defaults.  */
-extern int _uuconf_ihdb_system_internal P((struct sglobal *qglobal,
-					   const char *zsystem,
-					   struct uuconf_system *qsys));
-
-/* Read the HDB Permissions file.  */
-extern int _uuconf_ihread_permissions P((struct sglobal *qglobal));
 
 /* Initialize the global information structure.  */
 extern int _uuconf_iinit_global P((struct sglobal **pqglobal));

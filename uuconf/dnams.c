@@ -27,7 +27,7 @@
 #if USE_RCS_ID
 const char _uuconf_dnams_rcsid[] = "$Id$";
 #endif
-
+
 /* Get all known dialer names.  */
 
 int
@@ -35,33 +35,15 @@ uuconf_dialer_names (pointer pglobal, char ***ppzdialers)
 {
   struct sglobal *qglobal = (struct sglobal *) pglobal;
   char **pztaylor;
-  char **pzhdb;
   int iret;
 
   *ppzdialers = NULL;
   pztaylor = NULL;
-  pzhdb = NULL;
 
-#if HAVE_TAYLOR_CONFIG
   iret = uuconf_taylor_dialer_names (pglobal, &pztaylor);
   if (iret != UUCONF_SUCCESS)
     return iret;
-#endif
 
-#if HAVE_HDB_CONFIG
-  if (qglobal->qprocess->fhdb)
-    {
-      iret = uuconf_hdb_dialer_names (pglobal, &pzhdb);
-      if (iret != UUCONF_SUCCESS)
-	return iret;
-    }
-#endif
-
-  if (pzhdb == NULL)
-    *ppzdialers = pztaylor;
-  else if (pztaylor == NULL)
-    *ppzdialers = pzhdb;
-  else
     {
       char **pz;
 
@@ -75,21 +57,8 @@ uuconf_dialer_names (pointer pglobal, char ***ppzdialers)
 	    break;
 	}
 
-      if (iret == UUCONF_SUCCESS)
-	{
-	  for (pz = pzhdb; *pz != NULL; pz++)
-	    {
-	      iret = _uuconf_iadd_string (qglobal, *pz, FALSE, TRUE,
-					  ppzdialers, (pointer) NULL);
-	      if (iret != UUCONF_SUCCESS)
-		break;
-	    }
-	}
-
       if (pztaylor != NULL)
 	free ((pointer) pztaylor);
-      if (pzhdb != NULL)
-	free ((pointer) pzhdb);
     }
 
   if (iret == UUCONF_SUCCESS && *ppzdialers == NULL)

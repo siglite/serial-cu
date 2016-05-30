@@ -27,7 +27,7 @@
 #if USE_RCS_ID
 const char _uuconf_runuxq_rcsid[] = "$Id$";
 #endif
-
+
 /* Return how often to spawn a uuxqt process.  This is either a
    positive number representing the number of execution files to be
    received between spawns, or a special code.  When using
@@ -39,8 +39,6 @@ const char _uuconf_runuxq_rcsid[] = "$Id$";
 int
 uuconf_runuuxqt (pointer pglobal, int *pirunuuxqt)
 {
-#if HAVE_TAYLOR_CONFIG
-  {
     struct sglobal *qglobal = (struct sglobal *) pglobal;
     const char *zrun;
 
@@ -61,14 +59,6 @@ uuconf_runuuxqt (pointer pglobal, int *pirunuuxqt)
 	if (*zend != '\0' || *pirunuuxqt <= 0)
 	  *pirunuuxqt = UUCONF_RUNUUXQT_ONCE;
       }
-  }
-#else /* ! HAVE_TAYLOR_CONFIG */
-#if HAVE_HDB_CONFIG
-  *pirunuuxqt = UUCONF_RUNUUXQT_PERCALL;
-#else /* ! HAVE_HDB_CONFIG */
-  *pirunuuxqt = 10;
-#endif /* ! HAVE_HDB_CONFIG */
-#endif /* ! HAVE_TAYLOR_CONFIG */
 
   return UUCONF_SUCCESS;
 }

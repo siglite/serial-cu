@@ -87,12 +87,6 @@ static const struct cmdtab_offset asCmds[] =
       offsetof (struct sprocess, pzpwdfiles), itaddfile },
   { "unknown", UUCONF_CMDTABTYPE_FN, offsetof (struct sprocess, qunknown),
       itunknown },
-  { "v2-files", UUCONF_CMDTABTYPE_BOOLEAN,
-      offsetof (struct sprocess, fv2), NULL },
-  { "hdb-files", UUCONF_CMDTABTYPE_BOOLEAN,
-      offsetof (struct sprocess, fhdb), NULL },
-  { "bnu-files", UUCONF_CMDTABTYPE_BOOLEAN,
-      offsetof (struct sprocess, fhdb), NULL },
   { "timetable", UUCONF_CMDTABTYPE_FN | 3,
       offsetof (struct sprocess, pztimetables), _uuconf_itimetable },
   { NULL, 0, 0, NULL }

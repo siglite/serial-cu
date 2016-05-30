@@ -29,7 +29,7 @@ const char _uuconf_unk_rcsid[] = "$Id$";
 #endif
 
 #include <errno.h>
-
+
 /* Get information about an unknown system.  If we are using
    HAVE_TAYLOR_CONFIG, we just use it.  Otherwise if we are using
    HAVE_HDB_CONFIG, we use it.  Otherwise we return a default system.
@@ -42,26 +42,5 @@ const char _uuconf_unk_rcsid[] = "$Id$";
 int
 uuconf_system_unknown (pointer pglobal, struct uuconf_system *qsys)
 {
-#if HAVE_TAYLOR_CONFIG
   return uuconf_taylor_system_unknown (pglobal, qsys);
-#else /* ! HAVE_TAYLOR_CONFIG */
-#if HAVE_HDB_CONFIG
-  return uuconf_hdb_system_unknown (pglobal, qsys);
-#else /* ! HAVE_HDB_CONFIG */
-#if HAVE_V2_CONFIG
-  struct sglobal *qglobal = (struct sglobal *) pglobal;
-
-  _uuconf_uclear_system (qsys);
-  qsys->uuconf_palloc = uuconf_malloc_block ();
-  if (qsys->uuconf_palloc == NULL)
-    {
-      qglobal->ierrno = errno;
-      return UUCONF_MALLOC_FAILED | UUCONF_ERROR_ERRNO;
-    }
-  return _uuconf_isystem_basic_default (qglobal, qsys);
-#else /* ! HAVE_V2_CONFIG */
-  return UUCONF_NOT_FOUND;
-#endif /* ! HAVE_V2_CONFIG */
-#endif /* ! HAVE_HDB_CONFIG */
-#endif /* ! HAVE_TAYLOR_CONFIG */
 }

@@ -27,31 +27,17 @@
 #if USE_RCS_ID
 const char _uuconf_dial_rcsid[] = "$Id$";
 #endif
-
+
 /* Find a dialer by name.  */
 
 int
 uuconf_dialer_info (pointer pglobal, const char *zdialer, struct uuconf_dialer *qdialer)
 {
-#if HAVE_HDB_CONFIG
-  struct sglobal *qglobal = (struct sglobal *) pglobal;
-#endif
   int iret;
 
-#if HAVE_TAYLOR_CONFIG
   iret = uuconf_taylor_dialer_info (pglobal, zdialer, qdialer);
   if (iret != UUCONF_NOT_FOUND)
     return iret;
-#endif
-
-#if HAVE_HDB_CONFIG
-  if (qglobal->qprocess->fhdb)
-    {
-      iret = uuconf_hdb_dialer_info (pglobal, zdialer, qdialer);
-      if (iret != UUCONF_NOT_FOUND)
-	return iret;
-    }
-#endif
 
   return UUCONF_NOT_FOUND;
 }

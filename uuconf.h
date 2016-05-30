@@ -505,22 +505,6 @@ struct uuconf_config_file_names
   UUCONF_CONST char * UUCONF_CONST *uuconf_pztaylor_pwd;
   /* Taylor UUCP call file names; NULL terminated.  */
   UUCONF_CONST char * UUCONF_CONST *uuconf_pztaylor_call;
-  /* V2 system file name.  */
-  UUCONF_CONST char *uuconf_zv2_systems;
-  /* V2 device file name.  */
-  UUCONF_CONST char *uuconf_zv2_device;
-  /* V2 user permissions file name.  */
-  UUCONF_CONST char *uuconf_zv2_userfile;
-  /* V2 user permitted commands file name.  */
-  UUCONF_CONST char *uuconf_zv2_cmds;
-  /* HDB system file names; NULL terminated.  */
-  UUCONF_CONST char * UUCONF_CONST *uuconf_pzhdb_systems;
-  /* HDB device file names; NULL terminated.  */
-  UUCONF_CONST char * UUCONF_CONST *uuconf_pzhdb_devices;
-  /* HDB dialer file names; NULL terminated.  */
-  UUCONF_CONST char * UUCONF_CONST *uuconf_pzhdb_dialers;
-  /* HDB permissions file name.  */
-  UUCONF_CONST char *uuconf_zhdb_permissions;
 };
 
 /* Reliability bits for the ireliable field of ports and dialers.
@@ -1110,143 +1094,7 @@ extern int uuconf_taylor_callout ();
 extern int uuconf_taylor_validate ();
 
 #endif /* ! UUCONF_ANSI_C */
-
-#if UUCONF_ANSI_C
 
-/* Initialize the V2 configuration file reading routines.  This must
-   be called before any of the other V2 routines are called.  The
-   ppglobal argument should point to a generic pointer.  Moreover,
-   before calling this function the pointer either must be set to
-   NULL, or must have been passed to one of the other uuconf init
-   routines.  */
-extern int uuconf_v2_init (void **uuconf_ppglobal);
-
-/* Get the names of all systems listed in the V2 configuration files.
-   This sets *ppzsystems to point to an array of system names.  The
-   list of names is NULL terminated.  The array is allocated using
-   malloc, as is each element of the array.  If the falias argument is
-   0, the list will not include any aliases; otherwise, it will.  */
-extern int uuconf_v2_system_names (void *uuconf_pglobal,
-				   char ***uuconf_ppzsystems,
-				   int uuconf_falias);
-
-/* Get the information for system zsystem from the V2 configuration
-   files.  This will set *qsys.  */
-extern int uuconf_v2_system_info (void *uuconf_pglobal,
-				  const char *uuconf_zsystem,
-				  struct uuconf_system *uuconf_qsys);
-
-/* Find a port from the V2 configuration files.  The arguments and
-   return values are identical to those of uuconf_find_port.  */
-extern int uuconf_v2_find_port (void *uuconf_pglobal,
-				const char *uuconf_zname,
-				long uuconf_ibaud,
-				long uuconf_ihighbaud,
-				int (*uuconf_pifn) (struct uuconf_port *,
-						    void *uuconf_pinfo),
-				void *uuconf_pinfo,
-				struct uuconf_port *uuconf_qport);
-
-#else /* ! UUCONF_ANSI_C */
-
-extern int uuconf_v2_init ();
-extern int uuconf_v2_system_names ();
-extern int uuconf_v2_system_info ();
-extern int uuconf_v2_find_port ();
-
-#endif /* ! UUCONF_ANSI_C */
-
-#if UUCONF_ANSI_C
-
-/* Initialize the HDB configuration file reading routines.  This
-   should be called before any of the other HDB routines are called.
-   The ppglobal argument should point to a generic pointer.  Moreover,
-   before calling this function the pointer either must be set to
-   NULL, or must have been passed to one of the other uuconf init
-   routines.  The zprogram argument is used to match against a
-   "services" string in Sysfiles.  A NULL or "uucp" argument is taken
-   as "uucico".  */
-extern int uuconf_hdb_init (void **uuconf_ppglobal,
-			    const char *uuconf_zprogram);
-
-/* Get the names of all systems listed in the HDB configuration files.
-   This sets *ppzsystems to point to an array of system names.  The
-   list of names is NULL terminated.  The array is allocated using
-   malloc, as is each element of the array.  If the falias argument is
-   0, the list will not include any aliases; otherwise, it will (an
-   alias is created by using the ALIAS= keyword in the Permissions
-   file).  */
-extern int uuconf_hdb_system_names (void *uuconf_pglobal,
-				    char ***uuconf_ppzsystems,
-				    int uuconf_falias);
-
-/* Get the information for system zsystem from the HDB configuration
-   files.  This will set *qsys.  */
-extern int uuconf_hdb_system_info (void *uuconf_pglobal,
-				   const char *uuconf_zsystem,
-				   struct uuconf_system *uuconf_qsys);
-
-
-/* Get information for an unknown (anonymous) system.  If no
-   information is available for unknown systems, this will return
-   UUCONF_NOT_FOUND.  This does not run the remote.unknown shell
-   script.  */
-extern int uuconf_hdb_system_unknown (void *uuconf_pglobal,
-				      struct uuconf_system *uuconf_qsys);
-
-/* Find a port from the HDB configuration files.  The arguments and
-   return values are identical to those of uuconf_find_port.  */
-extern int uuconf_hdb_find_port (void *uuconf_pglobal,
-				 const char *uuconf_zname,
-				 long uuconf_ibaud,
-				 long uuconf_ihighbaud,
-				 int (*uuconf_pifn) (struct uuconf_port *,
-						     void *uuconf_pinfo),
-				 void *uuconf_pinfo,
-				 struct uuconf_port *uuconf_qport);
-
-/* Get the names of all dialers listed in the HDB configuration files.
-   This sets *ppzdialers to point to an array of dialer names.  The
-   list of names is NULL terminated.  The array is allocated using
-   malloc, as is each element of the array.  */
-extern int uuconf_hdb_dialer_names (void *uuconf_pglobal,
-				    char ***uuconf_ppzdialers);
-
-/* Get the information for the dialer zdialer from the HDB
-   configuration files.  This sets the fields in *qdialer.  */
-extern int uuconf_hdb_dialer_info (void *uuconf_pglobal,
-				   const char *uuconf_zdialer,
-				   struct uuconf_dialer *uuconf_qdialer);
-
-/* Get the local node name that should be used, given a login name,
-   considering only the MYNAME field in the HDB Permissions file.  If
-   the function returns UUCONF_SUCCESS, *pzname will point to an
-   malloced buffer.  */
-extern int uuconf_hdb_login_localname (void *uuconf_pglobal,
-				       const char *uuconf_zlogin,
-				       char **pzname);
-
-/* Get the name of the HDB remote.unknown shell script.  This does not
-   actually run the shell script.  If the function returns
-   UUCONF_SUCCESS, the name will be in *pzname, which will point to an
-   malloced buffer.  */
-extern int uuconf_hdb_remote_unknown (void *uuconf_pglobal,
-				      char **pzname);
-
-#else /* ! UUCONF_ANSI_C */
-
-extern int uuconf_hdb_init ();
-extern int uuconf_hdb_system_names ();
-extern int uuconf_hdb_system_info ();
-extern int uuconf_hdb_system_unknown ();
-extern int uuconf_hdb_find_port ();
-extern int uuconf_hdb_dialer_names ();
-extern int uuconf_hdb_dialer_info ();
-extern int uuconf_hdb_localname ();
-extern int uuconf_hdb_remote_unknown ();
-
-#endif /* ! UUCONF_ANSI_C */
-
 #if UUCONF_ANSI_C
 
 /* This function will set an appropriate error message into the buffer

@@ -85,8 +85,6 @@ _uuconf_iinit_global (struct sglobal **pqglobal)
   qprocess->fstrip_proto = TRUE;
   qprocess->cmaxuuxqts = 0;
   qprocess->zrunuuxqt = NULL;
-  qprocess->fv2 = TRUE;
-  qprocess->fhdb = TRUE;
   qprocess->pzdialcodefiles = NULL;
   qprocess->pztimetables = NULL;
   qprocess->zconfigfile = NULL;
@@ -100,15 +98,6 @@ _uuconf_iinit_global (struct sglobal **pqglobal)
   qprocess->qsyslocs = NULL;
   qprocess->qvalidate = NULL;
   qprocess->fuses_myname = FALSE;
-  qprocess->zv2systems = NULL;
-  qprocess->zv2devices = NULL;
-  qprocess->zv2userfile = NULL;
-  qprocess->zv2cmds = NULL;
-  qprocess->pzhdb_systems = NULL;
-  qprocess->pzhdb_devices = NULL;
-  qprocess->pzhdb_dialers = NULL;
-  qprocess->fhdb_read_permissions = FALSE;
-  qprocess->qhdb_permissions = NULL;
 
   azargs[0] = NULL;
   azargs[1] = (char *) "Evening";

@@ -40,30 +40,6 @@
 #define PASSWDFILE "/passwd"
 #define DIALCODEFILE "/dialcode"
 
-/* The names of the various V2 configuration files.  These are
-   appended to OLDCONFIGLIB which is defined in Makefile.  */
-#define V2_SYSTEMS "/L.sys"
-#define V2_DEVICES "/L-devices"
-#define V2_USERFILE "/USERFILE"
-#define V2_CMDS "/L.cmds"
-#define V2_DIALCODES "/L-dialcodes"
-
-/* The names of the HDB configuration files.  These are appended to
-   OLDCONFIGLIB which is defined in Makefile.  */
-#define HDB_SYSFILES "/Sysfiles"
-#define HDB_SYSTEMS "/Systems"
-#define HDB_PERMISSIONS "/Permissions"
-#define HDB_DEVICES "/Devices"
-#define HDB_DIALERS "/Dialers"
-#define HDB_DIALCODES "/Dialcodes"
-#define HDB_MAXUUXQTS "/Maxuuxqts"
-#define HDB_REMOTE_UNKNOWN "/remote.unknown"
-
-/* A string which is inserted between the value of OLDCONFIGLIB
-   (defined in the Makefile) and any names specified in the HDB
-   Sysfiles file.  */
-#define HDB_SEPARATOR "/"
-
 /* A macro to check whether fopen failed because the file did not
    exist.  */
 #define FNO_SUCH_FILE() (errno == ENOENT)

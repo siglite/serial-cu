@@ -27,7 +27,7 @@
 #if USE_RCS_ID
 const char _uuconf_maxuxq_rcsid[] = "$Id$";
 #endif
-
+
 /* Get the maximum number of simultaneous uuxqt executions.  When
    using TAYLOR_CONFIG, this is from the ``max-uuxqts'' command in
    config.  Otherwise, when using HDB_CONFIG, we read the file
@@ -36,48 +36,8 @@ const char _uuconf_maxuxq_rcsid[] = "$Id$";
 int
 uuconf_maxuuxqts (pointer pglobal, int *pcmax)
 {
-#if HAVE_TAYLOR_CONFIG
-  {
-    struct sglobal *qglobal = (struct sglobal *) pglobal;
+  struct sglobal *qglobal = (struct sglobal *) pglobal;
 
-    *pcmax = qglobal->qprocess->cmaxuuxqts;
-    return UUCONF_SUCCESS;
-  }
-#else /* ! HAVE_TAYLOR_CONFIG */
-#if HAVE_HDB_CONFIG
-  {
-    char ab[sizeof OLDCONFIGLIB + sizeof HDB_MAXUUXQTS - 1];
-    FILE *e;
-
-    *pcmax = 0;
-
-    memcpy ((pointer) ab, (constpointer) OLDCONFIGLIB,
-	    sizeof OLDCONFIGLIB - 1);
-    memcpy ((pointer) (ab + sizeof OLDCONFIGLIB - 1),
-	    (constpointer) HDB_MAXUUXQTS, sizeof HDB_MAXUUXQTS);
-    e = fopen (ab, "r");
-    if (e != NULL)
-      {
-	char *z;
-	size_t c;
-
-	z = NULL;
-	c = 0;
-	if (getline (&z, &c, e) > 0)
-	  {
-	    *pcmax = (int) strtol (z, (char **) NULL, 10);
-	    if (*pcmax < 0)
-	      *pcmax = 0;
-	    free ((pointer) z);
-	  }
-	(void) fclose (e);
-      }
-
-    return UUCONF_SUCCESS;
-  }
-#else /* ! HAVE_HDB_CONFIG */
-  *pcmax = 0;
+  *pcmax = qglobal->qprocess->cmaxuuxqts;
   return UUCONF_SUCCESS;
-#endif /* ! HAVE_HDB_CONFIG */
-#endif /* ! HAVE_TAYLOR_CONFIG */
 }

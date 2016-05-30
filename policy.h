@@ -454,24 +454,6 @@
    not used.  */
 #define BDEFAULT_UUX_GRADE ('N')
 
-/* To compile in use of the new style of configuration files described
-   in the documentation, set HAVE_TAYLOR_CONFIG to 1.  */
-#define HAVE_TAYLOR_CONFIG 1
-
-/* To compile in use of V2 style configuration files (L.sys, L-devices
-   and so on), set HAVE_V2_CONFIG to 1.  To compile in use of HDB
-   style configuration files (Systems, Devices and so on) set
-   HAVE_HDB_CONFIG to 1.  The files will be looked up in the
-   oldconfigdir directory as defined in the Makefile.
-
-   You may set any or all of HAVE_TAYLOR_CONFIG, HAVE_V2_CONFIG and
-   HAVE_HDB_CONFIG to 1 (you must set at least one of the macros).
-   When looking something up (a system, a port, etc.) the new style
-   configuration files will be read first, followed by the V2
-   configuration files, followed by the HDB configuration files.  */
-#define HAVE_V2_CONFIG 0
-#define HAVE_HDB_CONFIG 0
-
 /* Exactly one of the following macros must be set to 1.  The exact
    format of the spool directories is explained in unix/spool.c.
 
