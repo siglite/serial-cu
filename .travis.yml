@@ -3,4 +3,4 @@ addons:
   apt:
     packages:
     - texinfo
-script: ./configure && make
+script: ./autogen.sh && ./configure && make
