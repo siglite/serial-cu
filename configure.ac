@@ -4,6 +4,7 @@ dnl Copyright (c) 1992, 1993, 1994, 1995, 2002 Ian Lance Taylor
 dnl
 AC_REVISION([$Id$])
 AC_INIT(policy.h)
+AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE(uucp, 1.07)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
