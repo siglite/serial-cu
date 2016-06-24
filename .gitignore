@@ -1,2 +1,9 @@
-/uucp.info*
+# Autotools
 Makefile.in
+/configure
+/autom4te.cache/
+/uucp.info*
+
+# Editors
+*~
+*.swp
